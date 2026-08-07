@@ -53,6 +53,7 @@ Você faz parte de um **Agent Team** com comunicação bidirecional:
 - [ ] Comportamento esperado em happy path?
 - [ ] Edge cases cobertos?
 - [ ] Integração com dependências correta?
+- [ ] Nenhum arquivo fora da lista de artefatos do plano? (arquivo não previsto = ❌ CRÍTICO)
 
 #### 4b. Validação Fluig
 

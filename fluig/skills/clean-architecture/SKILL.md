@@ -94,6 +94,21 @@ constraint parsing + REST + regra + montagem de dataset. A refatoração guiada 
 
 Não crie `domain/` para um widget que só lista um dataset — sobre-engenharia também é dívida.
 
+### Camada ≠ arquivo (o SOLID não é para virar enxurrada de arquivos)
+
+Um arquivo gigante é problema; **vinte arquivos de dez linhas também são** — cada um entra no
+bundle, no review e no `.zip` do widget. Separe por **motivo de mudança**, não por contagem de
+classes. O Angular já obriga multi-arquivo por componente; a camada extra tem que se pagar:
+
+- **Extraia um service quando houver 2+ consumidores** ou quando a testabilidade exigir
+  (dublê no lugar de HTTP/Dataset). Service com um consumidor só é indireção, não arquitetura.
+- **Interface com uma implementação só:** só se o teste precisa do dublê.
+- No dataset/evento (Rhino, sem `import`), o "arquivo por camada" **não existe** — separe em
+  funções puras no mesmo fonte, como já diz o mapa de camadas acima.
+- **A lista de artefatos é fechada no `/fluig:plan`.** Arquivo que não está no plano não é
+  criado na implementação — se a necessidade apareceu, é decisão de design e volta ao
+  `/fluig:brainstorm`.
+
 ## Fluxo de uso
 
 1. **Design** (`/fluig:brainstorm` / `/fluig:plan`): por caso de uso, defina os artefatos

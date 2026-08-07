@@ -82,7 +82,7 @@ Próximos passos para produção:
 Ciclo de desenvolvimento concluído.
 
 Todos os gates passaram:
-  ✅ Implementação (teammates haiku + sonnet)
+  ✅ Implementação (teammates sonnet)
   ✅ Review spec + qualidade
   ✅ Lint gate (advpls appre)
   ✅ Deploy compilado (patch .ptm)

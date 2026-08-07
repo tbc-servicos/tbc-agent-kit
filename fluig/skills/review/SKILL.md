@@ -14,7 +14,7 @@ Não declare o artefato "aprovado" ou "pronto para produção" sem completar os 
 
 ## Regra de Modelos
 
-Teammates de review e QA usam **sonnet**. Nunca escalar para opus automaticamente — se necessário, sugerir ao dev.
+Teammates de review e QA usam **sonnet**. Nenhum agente troca de modelo sozinho — opus é do brainstorm, e quem escala é o dev com `/model`.
 
 ## Passo 1 — Revisão Estática (fluig-reviewer)
 

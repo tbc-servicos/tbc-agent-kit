@@ -50,7 +50,7 @@ source ~/.zshrc
   │
   ├─ TeamCreate("fluig-impl-team")
   │
-  ├─ fluig-implementer (haiku, worktree isolado)
+  ├─ fluig-implementer (sonnet, worktree isolado)
   │   ├── Recebe task → consulta MCP → implementa TDD → testa
   │   ├── Reporta DONE/BLOCKED/NEEDS_CONTEXT
   │   └── Recebe feedback dos reviewers → corrige → re-reporta
@@ -84,7 +84,7 @@ source ~/.zshrc
         ↓
 /fluig:plan        →  plano de implementação com tasks TDD
         ↓
-/fluig:implement   →  Agent Team (haiku dev + sonnet review, worktree)
+/fluig:implement   →  Agent Team (sonnet dev + sonnet review, worktree)
         ↓
 /fluig:deploy      →  deploy no servidor Fluig de teste
         ↓
@@ -132,7 +132,7 @@ Cada skill termina com **"Próximo passo:"** guiando o dev para a etapa seguinte
 
 | Teammate | Modelo | Papel | Isolamento |
 |----------|--------|-------|------------|
-| `fluig-implementer` | haiku | Implementa tasks do plano seguindo TDD | worktree |
+| `fluig-implementer` | sonnet | Implementa tasks do plano seguindo TDD | worktree |
 | `fluig-spec-reviewer` | sonnet | Verifica conformidade com a spec | — |
 | `fluig-reviewer` | sonnet | Verifica qualidade de código Fluig | — |
 | `fluig-qa` | sonnet | Análise de riscos e edge cases | — |
@@ -142,11 +142,12 @@ Cada skill termina com **"Próximo passo:"** guiando o dev para a etapa seguinte
 
 | Papel | Modelo |
 |-------|--------|
-| Dev (implementer) | **haiku** |
+| Brainstorm / design | **opus** |
+| Dev (implementer) | **sonnet** |
 | Review e QA | **sonnet** |
-| Opus | **NUNCA automático** — só quando o dev solicitar explicitamente |
+| Deploy | **haiku** |
 
-O plugin nunca escala para opus por conta própria. Se a task for complexa, sugere ao dev mas a decisão é dele.
+Nenhum agente troca de modelo por conta própria. O `/fluig:brainstorm` exige opus e para se a sessão não estiver nele — quem troca é o dev, com `/model opus`. Decisão de design que aparece no meio da implementação volta ao brainstorm; não vira escalada ad-hoc.
 
 ## Hooks
 
@@ -183,7 +184,7 @@ fluig/
 │   ├── init-project/   # Setup projeto cliente
 │   └── feedback/       # Registra aprendizado pós-correção
 ├── agents/             # 5 teammates (Agent Teams)
-│   ├── fluig-implementer.md   # Dev (haiku, worktree)
+│   ├── fluig-implementer.md   # Dev (sonnet, worktree)
 │   ├── fluig-spec-reviewer.md # Spec review (sonnet)
 │   ├── fluig-reviewer.md      # Code quality (sonnet)
 │   ├── fluig-qa.md            # QA (sonnet)

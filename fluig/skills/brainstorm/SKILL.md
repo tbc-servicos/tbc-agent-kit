@@ -10,6 +10,18 @@ Você está iniciando o planejamento de uma funcionalidade Fluig. Nenhum código
 
 Não invoque nenhuma skill de scaffolding (`fluig-widget`, `fluig-form`, `fluig-dataset`, `fluig-workflow`) antes de ter o design aprovado pelo usuário nesta skill.
 
+## HARD GATE — modelo opus
+
+Brainstorm é design, e design roda em **opus**. Antes do Passo 1, verifique qual modelo está
+atendendo esta sessão. Se **não** for opus, PARE e responda exatamente:
+
+> ⚠️ O brainstorm exige o modelo **opus**.
+> Sessão atual: `<modelo>`. Rode `/model opus` e chame `/fluig:brainstorm` de novo.
+
+Não faça as perguntas do Passo 1 e não gere design fora do opus. Só siga em outro modelo se o
+desenvolvedor mandar seguir mesmo assim, por escrito, nesta conversa — e registre isso no
+design aprovado.
+
 ## Passo 1 — Entender o artefato
 
 Use `AskUserQuestion` com as perguntas abaixo em uma única chamada com múltiplas questões:

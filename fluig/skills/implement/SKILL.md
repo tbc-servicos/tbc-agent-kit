@@ -1,6 +1,6 @@
 ---
 name: implement
-description: Orquestra Agent Team para executar plano Fluig — fluig-implementer (haiku) implementa em worktree isolado, fluig-spec-reviewer (sonnet) verifica spec, fluig-reviewer (sonnet) revisa qualidade. Comunicação bidirecional entre teammates. Próximo passo obrigatório: /fluig:deploy.
+description: Orquestra Agent Team para executar plano Fluig — fluig-implementer (sonnet) implementa em worktree isolado, fluig-spec-reviewer (sonnet) verifica spec, fluig-reviewer (sonnet) revisa qualidade. Comunicação bidirecional entre teammates. Próximo passo obrigatório: /fluig:deploy.
 disable-model-invocation: true
 ---
 
@@ -26,10 +26,11 @@ Se Agent Teams não estiver habilitado, informe o usuário e caia no fallback (s
 
 | Papel | Modelo | Uso |
 |-------|--------|-----|
-| fluig-implementer | **haiku** | Implementação mecânica, TDD |
+| fluig-implementer | **sonnet** | Implementação — exige raciocínio sobre regra de negócio |
 | fluig-spec-reviewer | **sonnet** | Verificação de conformidade com spec |
 | fluig-reviewer | **sonnet** | Qualidade de código Fluig |
-| Opus | **NUNCA automático** | Se complexo, sugerir ao dev — decisão é dele |
+| Opus | **só no brainstorm** | O design já foi feito em opus (`/fluig:brainstorm`). Nenhum teammate escala sozinho |
+| Haiku | **não usar aqui** | Haiku só em deploy (`fluig-deployer`) |
 
 
 ## Artefato de estado dos gates (gates.json)
@@ -51,7 +52,7 @@ TeamCreate({
 ```
 
 Os teammates serão despachados via Agent tool com:
-- `subagent_type: "fluig:fluig-implementer"` (haiku)
+- `subagent_type: "fluig:fluig-implementer"` (sonnet)
 - `subagent_type: "fluig:fluig-spec-reviewer"` (sonnet)
 - `subagent_type: "fluig:fluig-reviewer"` (sonnet)
 - `isolation: "worktree"` para implementador (trabalha em cópia isolada)
@@ -69,14 +70,14 @@ Leia o arquivo e extraia:
 
 Para cada task na ordem de dependência:
 
-### 2a. Dispatch para fluig-implementer (haiku, worktree isolado)
+### 2a. Dispatch para fluig-implementer (sonnet, worktree isolado)
 
 ```
 Agent({
   subagent_type: "fluig:fluig-implementer",
   name: "impl-task-N",
   isolation: "worktree",
-  model: "haiku",
+  model: "sonnet",
   prompt: "<conteúdo de implementer-prompt.md preenchido>"
 })
 ```
@@ -170,7 +171,7 @@ Próximo passo: /fluig:deploy
 - **Nunca skip reviews** — implementação sempre passa por spec-reviewer E code-reviewer
 - **Nunca prossiga com itens CRÍTICOS** — espere correção ou escale ao usuário
 - **Nunca ignore falhas de teste** — 100% testes passam antes de review
-- **Nunca escale para opus automaticamente** — sugerir mas decisão é do dev
+- **Nunca escale de modelo por conta própria** — implementação e review são sonnet; decisão de design volta ao `/fluig:brainstorm` (opus), com o dev
 
 ## Fallback (sem Agent Teams)
 
@@ -184,7 +185,7 @@ Se Agent Teams não estiver disponível:
 ## Templates de dispatch
 
 Veja os arquivos:
-- `skills/implement/implementer-prompt.md` — template para haiku
+- `skills/implement/implementer-prompt.md` — template para o implementer (sonnet)
 - `skills/implement/spec-reviewer-prompt.md` — template para sonnet validação spec
 - `skills/implement/code-reviewer-prompt.md` — template para sonnet validação código
 

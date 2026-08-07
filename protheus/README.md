@@ -2,7 +2,7 @@
 
 Plugin Claude Code para desenvolvimento **TOTVS Protheus** (ADVPL/TLPP).
 
-Ciclo completo: brainstorm → plan → implement (Agent Team haiku/sonnet, worktree) → deploy (TDS-CLI) → qa (TIR E2E) → verify.
+Ciclo completo: brainstorm → plan → implement (Agent Team sonnet, worktree) → deploy (TDS-CLI) → qa (TIR E2E) → verify.
 
 Conecta automaticamente ao **MCP Server remoto** com a Knowledge Base ADVPL/TLPP da TBC.
 
@@ -174,7 +174,7 @@ Reinicie o Claude Desktop depois de salvar.
   │
   ├─ TeamCreate("protheus-impl-team")
   │
-  ├─ protheus-implementer (haiku, worktree isolado)
+  ├─ protheus-implementer (sonnet, worktree isolado)
   │   ├── Recebe task → consulta MCP → implementa → lint
   │   ├── Reporta DONE/BLOCKED/NEEDS_CONTEXT
   │   └── Recebe feedback dos reviewers → corrige → re-reporta
@@ -208,7 +208,7 @@ Reinicie o Claude Desktop depois de salvar.
 /protheus:brainstorm    → MIT044 (opcional) + perguntas + design aprovado
 /protheus:plan          → decompõe design em tasks ADVPL-tipadas
 /protheus:implement     → Agent Team (worktree + feedback bidirecional):
-   ├── protheus-implementer (haiku)      → implementa cada artefato via TDD
+   ├── protheus-implementer (sonnet)     → implementa cada artefato via TDD
    ├── protheus-spec-reviewer (sonnet)   → verifica conformidade com spec
    ├── protheus-reviewer (sonnet)        → qualidade de código ADVPL/TLPP
    └── lint gate (advpls appre)          → validação local antes de deploy
@@ -221,9 +221,10 @@ Reinicie o Claude Desktop depois de salvar.
 
 | Papel | Modelo | Regra |
 |-------|--------|-------|
-| Dev (implementer) | **haiku** | Implementação mecânica, scaffolding, TDD |
+| Brainstorm / design | **opus** | `/protheus:brainstorm` para se a sessão não estiver em opus |
+| Dev (implementer) | **sonnet** | Implementação carrega regra de negócio |
 | Review e QA | **sonnet** | Análise qualitativa, padrões, riscos |
-| Opus | **NUNCA automático** | Só quando o dev solicitar explicitamente |
+| Deploy / compilação | **haiku** | Compilar e gerar patch — mecânico |
 
 ## Skills Disponíveis (17)
 
@@ -274,7 +275,7 @@ Esteira do código ao artefato renderizando dados num SmartView (TReports) self-
 
 | Teammate | Modelo | Papel | Isolamento |
 |----------|--------|-------|------------|
-| `protheus-implementer` | haiku | Implementa tasks do plano via TDD | worktree |
+| `protheus-implementer` | sonnet | Implementa tasks do plano via TDD | worktree |
 | `protheus-spec-reviewer` | sonnet | Verifica conformidade com spec | — |
 | `protheus-reviewer` | sonnet | Qualidade de código ADVPL/TLPP | — |
 | `protheus-deployer` | haiku | Compila via `advpls cli` + gera patch .ptm | — |
@@ -382,7 +383,7 @@ protheus/
 │       ├── references/recipe.md   # receita do ambiente (env-driven)
 │       └── assets/VENDASIA.tlpp   # BO de exemplo (dados literais)
 ├── agents/                        # 5 teammates (Agent Teams)
-│   ├── protheus-implementer.md    # haiku — implementa tasks (worktree)
+│   ├── protheus-implementer.md    # sonnet — implementa tasks (worktree)
 │   ├── protheus-spec-reviewer.md  # sonnet — verifica spec
 │   ├── protheus-reviewer.md       # sonnet — qualidade código
 │   ├── protheus-deployer.md       # haiku — compila + patch

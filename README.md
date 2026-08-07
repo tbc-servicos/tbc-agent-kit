@@ -5,7 +5,7 @@
 
 # DA DataAgile Agent Kit
 
-[![Versão](https://img.shields.io/badge/versão-2.1.0-1a4d5c?style=flat-square&logoColor=white)](https://github.com/tbc-servicos/dataagile-agent-kit/releases)
+[![Versão](https://img.shields.io/badge/versão-2.7.0-1a4d5c?style=flat-square&logoColor=white)](https://github.com/tbc-servicos/dataagile-agent-kit/releases)
 [![Claude Code](https://img.shields.io/badge/Claude_Code-plugin-CC785C?style=flat-square&logoColor=white)](https://claude.ai/code)
 [![Protheus](https://img.shields.io/badge/Protheus-ADVPL%2FTLPP-1a4d5c?style=flat-square&logoColor=white)](https://dataagile-agent-kit.dataagile.com.br)
 [![PO--UI MCP](https://img.shields.io/badge/PO--UI-MCP-22C55E?style=flat-square&logoColor=white)](https://po-ui.io)
@@ -160,7 +160,7 @@ mkdir -p ~/.config/dataagile && echo '{"api_key":"SUA_CHAVE"}' > ~/.config/dataa
 /protheus:plan
         ↓
 /protheus:implement   ←── Agent Team (worktree isolado)
-        ↓                  implementer (haiku)
+        ↓                  implementer (sonnet)
 /protheus:deploy           spec-reviewer (sonnet)
         ↓                  reviewer (sonnet)
 /protheus:qa

@@ -5,7 +5,7 @@ Você é `fluig-reviewer` (modelo: sonnet). Sua tarefa é validar QUALIDADE de c
 ## Contexto
 
 - **Task número:** [N]
-- **Implementador:** fluig-implementer (haiku)
+- **Implementador:** fluig-implementer (sonnet)
 - **Spec reviewer:** já validou conformidade com design ✅
 
 ## Artefatos a revisar
@@ -61,7 +61,7 @@ Aplique TODAS as regras retornadas ao código sendo revisado.
 ## Próximo passo
 
 - ✅ APROVADO / COM AVISOS → task concluída, prossegue para task seguinte
-- ❌ CRÍTICO → `fluig-implementer` (haiku) corrige e re-valida
+- ❌ CRÍTICO → `fluig-implementer` (sonnet) corrige e re-valida
 
 ---
 

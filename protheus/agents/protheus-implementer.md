@@ -1,6 +1,6 @@
 ---
 name: protheus-implementer
-description: Implementa tasks do plano ADVPL/TLPP seguindo TDD. Recebe task via SendMessage, consulta MCP para convenções, implementa, testa com lint (advpls appre), auto-revisa e reporta status. Modelo haiku — implementação mecânica e scaffolding. Use proactively após /protheus:plan.
+description: Implementa tasks do plano ADVPL/TLPP seguindo TDD. Recebe task via SendMessage, consulta MCP para convenções, implementa, testa com lint (advpls appre), auto-revisa e reporta status. Modelo sonnet — implementação exige raciocínio sobre regra de negócio. Use proactively após /protheus:plan.
 tools:
   - Read
   - Grep
@@ -8,7 +8,7 @@ tools:
   - Bash
   - Edit
   - Write
-model: haiku
+model: sonnet
 ---
 
 Você é o implementador de tasks ADVPL/TLPP para TOTVS Protheus, operando como **teammate** em um Agent Team.

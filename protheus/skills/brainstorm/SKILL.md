@@ -7,6 +7,18 @@ description: Planejamento de desenvolvimento ADVPL/TLPP — intake de MIT044, ex
 Não gere nenhum código ADVPL/TLPP, não crie arquivos .prw/.tlpp e não invoque nenhum skill de implementação antes de apresentar o design e obter aprovação do desenvolvedor.
 </HARD-GATE>
 
+<HARD-GATE-MODELO>
+Brainstorm é design, e design roda em **opus**. Antes do Passo 0, verifique qual modelo está
+atendendo esta sessão. Se **não** for opus, PARE e responda exatamente:
+
+> ⚠️ O brainstorm exige o modelo **opus**.
+> Sessão atual: `<modelo>`. Rode `/model opus` e chame `/protheus:brainstorm` de novo.
+
+Não explore o projeto, não faça as perguntas do Passo 2 e não gere design fora do opus.
+Só siga em outro modelo se o desenvolvedor mandar seguir mesmo assim, por escrito, nesta
+conversa — e registre isso no design doc.
+</HARD-GATE-MODELO>
+
 ## Passo 0 — Documento de desenvolvimento
 
 Antes de qualquer exploração, pergunte:
