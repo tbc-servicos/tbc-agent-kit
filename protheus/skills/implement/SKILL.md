@@ -1,6 +1,6 @@
 ---
 name: implement
-description: Orquestra Agent Team para executar o plano ADVPL/TLPP — protheus-implementer (haiku) implementa em worktree isolado, protheus-spec-reviewer (sonnet) verifica spec, protheus-reviewer (sonnet) revisa qualidade. Comunicação bidirecional entre teammates. Gate de compilação via lint. Use após /protheus:plan. Próximo passo: /protheus:deploy.
+description: Orquestra Agent Team para executar o plano ADVPL/TLPP — protheus-implementer (sonnet) implementa em worktree isolado, protheus-spec-reviewer (sonnet) verifica spec, protheus-reviewer (sonnet) revisa qualidade. Comunicação bidirecional entre teammates. Gate de compilação via lint. Use após /protheus:plan. Próximo passo: /protheus:deploy.
 disable-model-invocation: true
 ---
 
@@ -25,10 +25,11 @@ Se Agent Teams não estiver habilitado, informe o usuário e caia no fallback (E
 
 | Papel | Modelo | Uso |
 |-------|--------|-----|
-| protheus-implementer | **haiku** | Implementação mecânica, TDD |
+| protheus-implementer | **sonnet** | Implementação — exige raciocínio sobre regra de negócio |
 | protheus-spec-reviewer | **sonnet** | Verificação de conformidade com spec |
 | protheus-reviewer | **sonnet** | Qualidade de código ADVPL/TLPP |
-| Opus | **NUNCA automático** | Se complexo, sugerir ao dev — decisão é dele |
+| Opus | **só no brainstorm** | O design já foi feito em opus (`/protheus:brainstorm`). Nenhum teammate escala sozinho |
+| Haiku | **não usar aqui** | Haiku só em deploy/compilação (`protheus-deployer`) |
 
 ---
 
@@ -52,14 +53,14 @@ TeamCreate({
 ```
 
 Os teammates serão despachados via Agent tool com:
-- `subagent_type: "protheus:protheus-implementer"` (haiku)
+- `subagent_type: "protheus:protheus-implementer"` (sonnet)
 - `subagent_type: "protheus:protheus-spec-reviewer"` (sonnet)
 - `subagent_type: "protheus:protheus-reviewer"` (sonnet)
 - `isolation: "worktree"` para implementador (trabalha em cópia isolada)
 
 ---
 
-## Estágio 1 — Implementação (teammate haiku, worktree isolado)
+## Estágio 1 — Implementação (teammate sonnet, worktree isolado)
 
 Para cada task de implementação do plano, despache o teammate `protheus-implementer`:
 
@@ -68,7 +69,7 @@ Agent({
   subagent_type: "protheus:protheus-implementer",
   name: "impl-task-N",
   isolation: "worktree",
-  model: "haiku",
+  model: "sonnet",
   prompt: "<conteúdo do implementer-prompt.md preenchido>"
 })
 ```
@@ -198,10 +199,12 @@ Próximo passo: /protheus:deploy
 
 ### Sobre complexidade
 
-Se durante a implementação identificar que uma task é complexa demais para haiku:
+Se durante a implementação aparecer uma decisão de **design** que o brainstorm não
+resolveu (nova camada, novo fonte, contrato diferente do aprovado), **pare** — isso não se
+resolve na implementação:
 ```
-⚠️ Task [N] pode se beneficiar do modelo opus para [motivo].
-Deseja escalar este task para opus? (decisão do dev)
+⚠️ Task [N] esbarra em decisão de design não coberta pelo design aprovado: [motivo].
+Volte ao /protheus:brainstorm (opus) antes de continuar.
 ```
 
 **Nunca escalar automaticamente.** A decisão é sempre do desenvolvedor.

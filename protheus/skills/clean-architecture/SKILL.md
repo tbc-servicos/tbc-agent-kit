@@ -63,14 +63,33 @@ regra pura sem sufixo. A nomenclatura de arquivo segue a convenção do projeto;
 
 ## Quando aplicar (pragmatismo)
 
-| Tamanho da mudança | Estrutura mínima |
-|---|---|
-| PE trivial, ajuste de 1 função | Só a regra de sempre: PE delega para User Function |
-| Rotina nova média (1–3 fontes) | Separar ao menos **regra pura** × **acesso a dados** (2 funções/classes) — o suficiente para testar a regra por unidade, sem banco |
-| Desenvolvimento grande (módulo, integração, N fontes) | Camadas completas: adaptador → caso de uso → domínio + repositórios, 1 namespace por contexto |
+| Tamanho da mudança | Estrutura mínima | Orçamento de fontes (fora os de teste) |
+|---|---|---|
+| PE trivial, ajuste de 1 função | Só a regra de sempre: PE delega para User Function | 1 |
+| Rotina nova média | Separar ao menos **regra pura** × **acesso a dados** (2 funções/classes) — o suficiente para testar a regra por unidade, sem banco | até 3 |
+| Desenvolvimento grande (módulo, integração) | Camadas completas: adaptador → caso de uso → domínio + repositórios, 1 namespace por contexto | 1 fonte por camada por contexto; acima disso, justifique fonte a fonte no plano |
 
 Sobre-engenharia também é dívida: **não** crie interface + repositório + service para
 encapsular um `Posicione()`. O critério é: a regra de negócio merece viver isolada e testada.
+
+### Camada ≠ arquivo (o SOLID não é para virar enxurrada de fontes)
+
+Um fonte gigante é problema; **vinte fontes minúsculos também são** — cada `.tlpp` entra no
+patch, precisa compilar, versionar e ser conferido na documentação de customizações. Separe
+por **motivo de mudança**, não por contagem de classes.
+
+- **TLPP aceita mais de uma classe no mesmo fonte** (verificado em código compilado em
+  produção: adapter + service convivendo no mesmo arquivo, sob o mesmo `namespace`). Classes
+  coesas — mesmo papel, mesmo contexto, que mudam pelo mesmo motivo — ficam juntas.
+- **Piso:** classe pequena que existe só "para ficar SOLID" volta para o fonte do seu papel.
+  Interface com uma implementação só: só crie se o teste precisa do dublê.
+- **Teto:** fonte passando de ~800 linhas, ou classe de ~500, é sinal de divisão real.
+- **A lista de fontes é fechada no `/protheus:plan`.** Fonte que não está no plano não é
+  criado na implementação — se apareceu a necessidade, ela é decisão de design e volta ao
+  `/protheus:brainstorm`.
+
+> Os números são ponto de partida calibrado em desenvolvimento real. Ajuste no seu projeto se
+> o padrão local for outro — mas mantenha um teto **declarado**, não "o quanto sair".
 
 ## Fluxo de uso
 

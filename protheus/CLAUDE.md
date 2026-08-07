@@ -43,9 +43,12 @@ Custo de código fora do padrão: alto (retrabalho, code review, manutenção).
 
 | Papel | Modelo | Regra |
 |-------|--------|-------|
-| Dev (implementer) | **haiku** | Implementação mecânica, scaffolding, TDD |
+| Brainstorm / design | **opus** | `/protheus:brainstorm` para se a sessão não estiver em opus |
+| Dev (implementer) | **sonnet** | Implementação carrega regra de negócio; não é mecânica |
 | Review e QA | **sonnet** | Análise qualitativa, padrões, riscos |
-| Opus | **NUNCA automático** | Só quando o dev solicitar. Se complexo, sugerir mas NÃO escalar |
+| Deploy / compilação | **haiku** | Compilar, gerar patch — mecânico, sem decisão de código |
+
+Nenhum agente troca de modelo por conta própria: quem escala é o dev, com `/model`.
 
 ## Agent Teams (v2.0.1)
 
@@ -105,7 +108,7 @@ export CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=50
 ```
 /protheus:brainstorm → MIT044/design aprovado
 /protheus:plan       → plano de implementação com tasks tipadas
-/protheus:implement  → Agent Team (implementer haiku + reviewers sonnet, worktree)
+/protheus:implement  → Agent Team (implementer sonnet + reviewers sonnet, worktree)
 /protheus:deploy     → lint + compilação AppServer + patch .ptm
 /protheus:qa         → testes E2E Playwright + análise qualidade
 /protheus:verify     → checklist TOTVS + deploy produção
@@ -123,7 +126,7 @@ export CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=50
 
 | Teammate | Modelo | Papel | Isolamento |
 |----------|--------|-------|------------|
-| protheus-implementer | haiku | Implementa tasks do plano via TDD | worktree |
+| protheus-implementer | sonnet | Implementa tasks do plano via TDD | worktree |
 | protheus-spec-reviewer | sonnet | Verifica conformidade com spec | — |
 | protheus-reviewer | sonnet | Qualidade de código ADVPL/TLPP | — |
 | protheus-deployer | haiku | Compila via advpls cli + gera patch | — |

@@ -31,7 +31,7 @@ Para cada artefato identificado no design, crie uma task com:
 
 ```
 Task N: Implementar [NOME_ARQUIVO]
-Teammate: protheus-implementer (haiku)
+Teammate: protheus-implementer (sonnet)
 Artefato: R[MOD][TYPE][SEQ].prw (ou .tlpp)
 Tipo: [User Function | MVC | Ponto de Entrada | Relatório]
 Responsabilidade: [descrição funcional]
@@ -44,6 +44,23 @@ Contexto para o teammate:
 
 Tasks de implementação **podem rodar em paralelo** quando os artefatos
 forem independentes (PE em arquivo próprio, funções sem dependência mútua).
+
+### Fechar a lista de fontes (orçamento de arquivos)
+
+A lista de fontes do plano é **fechada**: o implementer não cria fonte que não esteja na
+tabela de tasks. Fonte novo = volta ao plano (e, se for decisão de design, ao
+`/protheus:brainstorm`).
+
+| Tamanho do desenvolvimento | Orçamento de fontes (fora os de teste) |
+|---|---|
+| Ajuste pontual / PE | 1 |
+| Rotina nova média | até 3 |
+| Desenvolvimento grande | 1 fonte por camada por contexto — acima disso, justifique no plano |
+
+- **Camada ≠ arquivo.** TLPP aceita mais de uma classe no mesmo fonte; classes coesas do mesmo
+  papel e contexto ficam juntas, e só se separam quando mudam por motivos diferentes.
+- **Teto:** fonte acima de ~800 linhas (ou classe de ~500) é sinal de divisão real.
+- Sobre-engenharia é dívida igual a monólito: **os dois** custam manutenção e patch.
 
 ---
 
@@ -122,8 +139,8 @@ Formato do plano:
 
 | # | Artefato | Tipo | Teammate | Paralelo? |
 |---|---------|------|----------|-----------|
-| 1 | RFATA001.prw | User Function | protheus-implementer (haiku) | sim |
-| 2 | PE_MATA010.prw | Ponto de Entrada MVC | protheus-implementer (haiku) | sim |
+| 1 | RFATA001.prw | User Function | protheus-implementer (sonnet) | sim |
+| 2 | PE_MATA010.prw | Ponto de Entrada MVC | protheus-implementer (sonnet) | sim |
 
 ## Tasks de Qualidade e Deploy
 

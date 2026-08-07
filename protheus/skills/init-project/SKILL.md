@@ -112,7 +112,7 @@ ls -la .git/hooks/pre-commit
 Para iniciar o desenvolvimento:
   /protheus:brainstorm → planejar o design (SEMPRE primeiro)
   /protheus:plan       → criar plano de implementação
-  /protheus:implement  → executar com teammates (haiku dev + sonnet review)
+  /protheus:implement  → executar com teammates (sonnet dev + sonnet review)
   /protheus:deploy     → lint + compilação AppServer + patch .ptm
   /protheus:qa         → testes E2E Playwright + análise qualidade
   /protheus:verify     → checklist TOTVS + deploy produção

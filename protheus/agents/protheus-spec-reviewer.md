@@ -47,6 +47,9 @@ Para cada item da especificação:
 - [ ] Campos especificados estão sendo lidos/gravados
 - [ ] Retorno do PE está correto (se aplicável)
 - [ ] Fluxo de dados está correto
+- [ ] **Nenhum fonte fora do plano.** Compare a lista de fontes criados/alterados com a
+      tabela de tasks do plano. Fonte que não está no plano é ❌ CRÍTICO — reporte com
+      `arquivo:linha` e mande voltar ao plano/brainstorm, não aprove "porque ficou bom"
 
 ### 4. Reportar
 

@@ -4,6 +4,39 @@ Histórico das versões públicas do `dataagile-agent-kit`.
 
 ---
 
+## [2.7.0] — 2026-08-07
+
+### Brainstorm em opus, implementação em sonnet, haiku só no deploy (protheus 2.15.0 · fluig 2.2.0)
+
+A regra anterior — haiku implementava, sonnet revisava, opus só a pedido — economizava, mas
+degradava a qualidade do código: implementar ADVPL/TLPP ou Fluig é decidir regra de negócio a
+cada linha, não preencher template.
+
+Agora: **opus no brainstorm/design**, **sonnet na implementação e no review/QA**, **haiku só em
+deploy/compilação** (`protheus-deployer`, `fluig-deployer`). Nenhum agente troca de modelo por
+conta própria — quem escala é o dev, com `/model`.
+
+O `/protheus:brainstorm` e o `/fluig:brainstorm` ganharam **gate duro**: param se a sessão não
+estiver em opus e mandam o dev rodar `/model opus`, em vez de seguir e produzir design no
+modelo errado.
+
+### Teto de fontes — SOLID deixou de virar enxurrada de arquivo
+
+Um fonte gigante é problema; vinte fontes minúsculos também. Cada `.tlpp` entra no patch,
+compila, versiona e é conferido na documentação de customizações.
+
+O `/protheus:clean-architecture` e o `/fluig:clean-architecture` ganharam a regra
+**camada ≠ arquivo**, com orçamento por porte (ajuste: 1 fonte · rotina média: até 3 ·
+desenvolvimento grande: 1 por camada por contexto), piso e teto de tamanho (~800 linhas por
+fonte, ~500 por classe) e o registro de que **TLPP aceita mais de uma classe no mesmo fonte** —
+classes coesas do mesmo papel ficam juntas. No Fluig a regra é por consumidor: service extraído
+só com 2+ consumidores ou quando o teste exige o dublê, já que o Angular obriga multi-arquivo.
+
+A lista de artefatos virou **gate**: fechada no `plan`, os implementers não criam arquivo fora
+da task (reportam `BLOCKED`) e os spec-reviewers tratam arquivo não previsto como **CRÍTICO**,
+com `arquivo:linha`.
+
+
 ## [2.6.1] — 2026-07-21
 
 ### O implementer parou de adivinhar e de "melhorar" código alheio (protheus 2.14.1 · fluig 2.1.1)

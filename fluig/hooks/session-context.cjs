@@ -18,6 +18,6 @@ emitSessionContext({
   ],
   notes: [
     'MCP tools disponiveis: searchFluigPatterns, searchFluigApi, searchKnowledge (plugin fluig tbc-knowledge)',
-    'Regra de modelos TBC: haiku para implementacao, sonnet para review/QA, opus somente se o dev pedir.',
+    'Regra de modelos: opus para brainstorm/design, sonnet para implementacao e review/QA, haiku somente para deploy/compilacao.',
   ],
 });

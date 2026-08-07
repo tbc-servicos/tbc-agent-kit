@@ -23,12 +23,13 @@ claude --plugin-dir /home/jv/developments/tbc/claude_skills/fluig
 
 | Papel | Modelo | Regra |
 |-------|--------|-------|
-| **Dev (implementer)** | haiku | Implementação mecânica, scaffolding |
+| **Brainstorm / design** | opus | `/fluig:brainstorm` para se a sessão não estiver em opus |
+| **Dev (implementer)** | sonnet | Implementação carrega regra de negócio |
 | **Review (spec + quality)** | sonnet | Análise qualitativa, padrões |
 | **QA (testes + análise)** | sonnet | Riscos, edge cases |
-| **Opus** | **NUNCA automático** | Só quando o dev solicitar explicitamente. Se a task for complexa, o orquestrador SUGERE mas a decisão é do dev |
+| **Deploy** | haiku | Upload/restart — mecânico, sem decisão de código |
 
-**O plugin NUNCA deve escalar para opus por conta própria. Sempre perguntar.**
+**Nenhum agente troca de modelo por conta própria.** Quem escala é o dev, com `/model`. O opus entra no brainstorm, não no meio da implementação.
 
 ## Agent Teams (v2.0.5)
 
@@ -90,7 +91,7 @@ export CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=50
     ↓
 /fluig:plan        →  plano de implementação
     ↓
-/fluig:implement   →  Agent Team (implementer haiku, worktree + reviewers sonnet)
+/fluig:implement   →  Agent Team (implementer sonnet, worktree + reviewers sonnet)
     ↓
 /fluig:deploy      →  deploy no servidor Fluig
     ↓
@@ -105,7 +106,7 @@ Cada skill guia para a próxima — o dev é conduzido pelo fluxo completo.
 
 | Teammate | Modelo | Papel | Isolamento |
 |----------|--------|-------|------------|
-| `fluig-implementer` | haiku | Implementa tasks do plano (TDD) | worktree |
+| `fluig-implementer` | sonnet | Implementa tasks do plano (TDD) | worktree |
 | `fluig-spec-reviewer` | sonnet | Verifica spec compliance | — |
 | `fluig-reviewer` | sonnet | Verifica code quality | — |
 | `fluig-qa` | sonnet | Análise de riscos e QA | — |

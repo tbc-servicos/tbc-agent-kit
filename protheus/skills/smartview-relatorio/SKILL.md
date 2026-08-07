@@ -89,7 +89,7 @@ para Grid/Pivot; para Report, ler o screenshot do viewer. "Existir" ≠ "renderi
 
 ## Regras de modelo (TBC)
 - Tarefas com **Playwright** (montar artefato na UI, screenshots) → SEMPRE `model: sonnet`.
-- Geração de código/scaffolding → `haiku`.
+- Geração de código/scaffolding → `sonnet` (haiku só em deploy/compilação).
 
 ## Recursos
 - `scripts/generate_bo.py` + `scripts/templates/integratedprovider.tlpp.j2` — gerador do BO.

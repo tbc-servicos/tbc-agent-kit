@@ -103,16 +103,17 @@ Prefixo do cliente: `[PREFIXO]` — usado em `wg_[PREFIXO]_`, `ds_[PREFIXO]_`, `
 
 | Papel | Modelo | Regra |
 |-------|--------|-------|
-| Dev (implementer) | **haiku** | Implementação mecânica, scaffolding |
+| Brainstorm / design | **opus** | `/fluig:brainstorm` para se a sessão não estiver em opus |
+| Dev (implementer) | **sonnet** | Implementação carrega regra de negócio |
 | Review e QA | **sonnet** | Análise qualitativa, padrões, riscos |
-| Opus | **NUNCA automático** | Só quando o dev solicitar. Se complexo, sugerir mas NÃO escalar |
+| Deploy | **haiku** | Upload/restart — mecânico |
 
 ## Ciclo de Desenvolvimento
 
 ```
 /fluig:brainstorm → design
 /fluig:plan       → plano de implementação
-/fluig:implement  → teammates (implementer haiku + reviewers sonnet)
+/fluig:implement  → teammates (implementer sonnet + reviewers sonnet)
 /fluig:deploy     → deploy servidor teste
 /fluig:qa         → testes E2E + análise QA
 /fluig:verify     → checklist + deploy produção
@@ -140,7 +141,7 @@ claude plugin update fluig@claude-skills-dataagile
 Para iniciar o desenvolvimento:
   /fluig:brainstorm → planejar o design (SEMPRE primeiro)
   /fluig:plan       → criar plano de implementação
-  /fluig:implement  → executar com teammates (haiku dev + sonnet review)
+  /fluig:implement  → executar com teammates (sonnet dev + sonnet review)
   /fluig:deploy     → deploy no servidor de teste
   /fluig:qa         → testes E2E + análise de qualidade
   /fluig:verify     → deploy final com checklist

@@ -109,14 +109,15 @@ O arquivo deve conter:
 
 | Fase | Modelo | Razão |
 |------|--------|-------|
-| Implementação (dev) | haiku | velocidade e contexto local |
+| Brainstorm / design | opus | decisão de arquitetura — feito antes, no `/fluig:brainstorm` |
+| Implementação (dev) | sonnet | implementação carrega regra de negócio, não é mecânica |
 | Review + QA | sonnet | validação semântica e conformidade |
-| Opus | somente se dev solicitar explicitamente | complexidade extrema |
+| Deploy | haiku | mecânico (upload/restart), sem decisão de código |
 
 ## Próximos passos
 
 Após aprovação deste plano:
-1. Agente `fluig-implementer` (haiku) executa tasks 1-N
+1. Agente `fluig-implementer` (sonnet) executa tasks 1-N
 2. Agente `fluig-spec-reviewer` (sonnet) valida conformidade com spec
 3. Agente `fluig-reviewer` (sonnet) valida qualidade de código
 4. Resultado: `/fluig:deploy`
@@ -140,8 +141,11 @@ Inclua o caminho exato do arquivo salvo.
 - TDD em cada task: teste falha → implementa → teste passa
 - Caminhos de arquivo sempre qualificados (relativos ao raiz do projeto)
 - Comandos sempre explícitos (ng test, npm test, ng build, etc.)
-- Modelo haiku para implementação, sonnet para reviews
+- Modelo sonnet para implementação e reviews; haiku só no deploy; opus só no brainstorm
 - Plano salvo em git antes de acionar `/fluig:implement`
+- **Lista de artefatos fechada:** o implementer não cria arquivo fora da lista do Passo 2.
+  Arquivo novo = volta ao plano. Não crie service/camada especulativa: só extraia quando
+  houver **2+ consumidores** ou a testabilidade exigir o dublê.
 
 ---
 

@@ -1,6 +1,6 @@
 ---
 name: fluig-implementer
-description: Implementa tarefas do plano Fluig seguindo TDD. Recebe task via SendMessage, implementa, testa, faz self-review e reporta status. Modelo haiku para execução mecânica. Comunicação bidirecional com reviewers. Use proactively após /fluig:plan.
+description: Implementa tarefas do plano Fluig seguindo TDD. Recebe task via SendMessage, implementa, testa, faz self-review e reporta status. Modelo sonnet — implementação exige raciocínio sobre regra de negócio. Comunicação bidirecional com reviewers. Use proactively após /fluig:plan.
 tools:
   - Read
   - Edit
@@ -8,7 +8,7 @@ tools:
   - Bash
   - Glob
   - Grep
-model: haiku
+model: sonnet
 ---
 
 # Fluig Implementer Agent
