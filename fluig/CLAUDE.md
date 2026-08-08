@@ -65,7 +65,7 @@ export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1
 - Custo: ~2K tokens fixos
 
 ### Camada 2 — Sob demanda (0 tokens até chamada)
-- MCP queries (`searchFluigPatterns`, `searchFluigApi`, etc.)
+- MCP queries (`searchKnowledge`, `ragSearchKnowledge`, `ragSearchDocs`)
 - Consultas ao RAG de documentação
 
 ### Camada 3 — Compactável (contexto de trabalho)
@@ -87,6 +87,10 @@ export CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=50
 ## Ciclo de Desenvolvimento
 
 ```
+/fluig:base        →  sandbox descartável na máquina do dev (inner loop E2E)
+    ↓ (opcional)
+/fluig:arqueologia →  mapa do ambiente da fatia (quando não houver)
+    ↓
 /fluig:brainstorm  →  design aprovado
     ↓
 /fluig:plan        →  plano de implementação

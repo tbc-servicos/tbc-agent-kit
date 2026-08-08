@@ -12,12 +12,12 @@ emitSessionContext({
   profile: 'internal',
   cleanupTbcDbs: false,
   groups: [
-    { title: 'Ciclo de desenvolvimento (nesta ordem)', names: ['init-project', 'brainstorm', 'plan', 'implement', 'deploy', 'qa', 'verify'] },
+    { title: 'Ciclo de desenvolvimento (nesta ordem)', names: ['init-project', 'arqueologia', 'brainstorm', 'plan', 'implement', 'deploy', 'qa', 'verify'] },
     { title: 'Scaffolding', names: ['widget', 'dataset', 'form', 'workflow'] },
-    { title: 'Qualidade e apoio', names: ['review', 'test', 'debug', 'api-ref', 'feedback'] },
+    { title: 'Qualidade e apoio', names: ['review', 'test', 'test-web', 'debug', 'api-ref', 'feedback', 'base'] },
   ],
   notes: [
-    'MCP tools disponiveis: searchFluigPatterns, searchFluigApi, searchKnowledge (plugin fluig tbc-knowledge)',
+    'MCP tools disponiveis: searchKnowledge (padroes/convencoes, use platform: "fluig") + ragSearchKnowledge, ragSearchDocs (busca semantica) — plugin fluig tbc-knowledge',
     'Regra de modelos: opus para brainstorm/design, sonnet para implementacao e review/QA, haiku somente para deploy/compilacao.',
   ],
 });

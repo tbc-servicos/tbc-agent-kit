@@ -13,7 +13,7 @@
       "name": "fluig",
       "source": "./fluig",
       "description": "Plugin para desenvolvimento TOTVS Fluig — ciclo completo: design (brainstorm), scaffolding (widget/dataset/form/workflow), revisão estática + testes (review) e deploy (verify).",
-      "version": "2.2.0",
+      "version": "2.3.0",
       "author": {
         "name": "DataAgile"
       },

@@ -8,8 +8,10 @@ Você vai conduzir o gate final antes de declarar um artefato Fluig pronto para 
 
 ## HARD GATE
 
-- **Leia `docs/plans/<plan>.gates.json`** e confirme: todas as chaves `ok`. O arquivo é a fonte de
-  verdade — não confie em afirmação da conversa.
+- **Leia `docs/fluig/plans/<slug>.gates.json`** e confirme: todas as chaves com
+  `status=ok` (as duas metades de `tests_unit` aceitam `n/a` explícito) — cole o
+  sumário literal do fluig-qa, não pergunte ao usuário. Não confie em afirmação da
+  conversa — o arquivo é a fonte de verdade (pipeline retomável). O `<slug>` é o basename (sem `.md`) do plano salvo pelo `/fluig:plan` em `docs/fluig/plans/`; havendo mais de um `.gates.json`, pergunte ao dev qual feature.
 
 Não acione o deploy final e não declare o artefato "pronto" sem completar o checklist abaixo com todas as respostas positivas.
 
@@ -45,6 +47,15 @@ Use `AskUserQuestion` para confirmar cada item:
 5. O horário de deploy é adequado? (evitar horário de pico de uso)
 
 **Se qualquer item for respondido negativamente:** não prossiga. Indique o que precisa ser resolvido antes de retomar.
+
+### Regressão do legado (os dois cenários)
+
+- [ ] O cabeçalho do plano tem a linha `**Regressão:**` — apontando para o arquivo
+      **ou** com justificativa de "não se aplica". Sem a linha = Passo 3.5 do plan
+      foi pulado → **bloqueia**
+- [ ] `docs/legado/regressao/<slug>.md` existe e **cada item tem veredito**:
+      verificado / não verificado / quebrou — item sem veredito **bloqueia**
+- [ ] Item que deixou de valer foi para "Arquivadas" com motivo — não apagado
 
 ## Passo 3 — Confirmação final
 
@@ -83,6 +94,28 @@ Para validar no servidor:
 Em caso de problema — rollback:
   "use fluig-deployer to rollback [artefato] to previous version"
 ```
+
+## Passo 5.5 — Writeback: devolver a entrega ao mapa (append-only, não bloqueia)
+
+**Só execute este passo com o deploy do Passo 4 CONCLUÍDO COM SUCESSO** — deploy negado no Passo 3 ou falho no Passo 4 não gera registro nenhum (entrega fantasma no mapa é regra CONFIRMADO falsa, o pior tipo). Com o artefato publicado, devolva o que a entrega mudou — senão o mapa da
+`/fluig:arqueologia` envelhece no instante do deploy e o `/fluig:brainstorm` da
+próxima demanda ancora o design numa foto velha do ambiente:
+
+1. **Itens novos** em `docs/legado/regressao/<slug>.md` (mesma numeração `W`):
+   comportamento que **esta entrega criou** e que outra demanda pode desfazer — só
+   CONFIRMADO e com forma de verificar (harness, spec E2E, artefato no servidor).
+   Item da lista original que a homologação provou errado vai para "Arquivadas"
+   **com o motivo**. Item externo (Protheus, RPA, job) entra com o sistema na Origem.
+   O checklist de regressão do Passo 2 (vereditos) continua sendo pré-deploy — este
+   passo só ACRESCENTA.
+2. **Linha `## Entregas`** no `docs/legado/<fatia>.md`: data, demanda, artefatos
+   publicados (dataset/form/workflow/widget + versão), RN novas numeradas
+   (`RN-<FATIA>-NN`, CONFIRMADO — o artefato acabou de ser publicado no Passo 4). Fatia sem
+   mapa: crie só com o cabeçalho e a seção `## Entregas` — registro de entrega não
+   é arqueologia.
+3. **`docs/legado/COBERTURA.md`**: ticket da entrega na linha da fatia.
+
+> Entrega que não volta pro mapa é conhecimento que morre no deploy.
 
 ## Regras obrigatórias
 

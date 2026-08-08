@@ -80,6 +80,8 @@ source ~/.zshrc
 ## Ciclo de Desenvolvimento
 
 ```
+/fluig:arqueologia →  mapa do ambiente da fatia (quando não houver)
+        ↓
 /fluig:brainstorm  →  entrevista + design aprovado + spec em disco
         ↓
 /fluig:plan        →  plano de implementação com tasks TDD
@@ -102,6 +104,7 @@ Cada skill termina com **"Próximo passo:"** guiando o dev para a etapa seguinte
 | Comando | Descrição |
 |---------|-----------|
 | `/fluig:init-project` | Inicializa projeto — entrevista o dev e gera CLAUDE.md com contexto do cliente (URL servidor, prefixos, integração Protheus) |
+| `/fluig:arqueologia` | Mapeia a fatia do ambiente Fluig do cliente (artefatos publicados e regras) antes do design |
 | `/fluig:brainstorm` | Gate de design — entrevista, mapeia integrações, gera spec aprovada antes de qualquer scaffolding |
 | `/fluig:plan` | Plano de implementação com tasks TDD e file mapping, salvo em `docs/fluig/plans/` |
 | `/fluig:implement` | Agent Team executando o plano (fluig-implementer em worktree + fluig-spec-reviewer + fluig-reviewer, comunicação bidirecional) |
@@ -123,7 +126,9 @@ Cada skill termina com **"Próximo passo:"** guiando o dev para a etapa seguinte
 | Comando | Descrição |
 |---------|-----------|
 | `/fluig:review` | Atalho: pipeline completo (revisão estática → testes → deploy → qa) — alternativa rápida ao fluxo guiado |
-| `/fluig:test` | Gera e executa testes unitários (Jasmine/Karma) + E2E (Playwright) |
+| `/fluig:test` | Testes unitários — widget (runner do projeto) e server-side (harness Node para `ds_*`/`wf_*`/eventos) |
+| `/fluig:test-web` | Ciclo E2E no servidor real: roteiro aprovado, evidências por passo e spec de regressão com JUnit |
+| `/fluig:base` | Sandbox Fluig descartável em Docker NA MÁQUINA DO DEV — inner loop E2E, reset em segundos |
 | `/fluig:debug` | Debugging sistemático em 4 fases (reproduzir → investigar → hipótese → corrigir) com logs Docker, Playwright traces, Karma |
 | `/fluig:api-ref` | Referência rápida das APIs Fluig: `DatasetFactory`, `DatasetBuilder`, `CardAPI`, `WCMAPI`, `fluigc`, `WFMovementDTO`, `getValue/setValue` |
 | `/fluig:feedback` | Registra aprendizado quando Claude erra e o dev corrige — alimenta a base de conhecimento Fluig |
