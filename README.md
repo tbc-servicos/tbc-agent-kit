@@ -5,7 +5,7 @@
 
 # DA DataAgile Agent Kit
 
-[![Versão](https://img.shields.io/badge/versão-2.8.0-1a4d5c?style=flat-square&logoColor=white)](https://github.com/tbc-servicos/dataagile-agent-kit/releases)
+[![Versão](https://img.shields.io/badge/versão-2.9.0-1a4d5c?style=flat-square&logoColor=white)](https://github.com/tbc-servicos/dataagile-agent-kit/releases)
 [![Claude Code](https://img.shields.io/badge/Claude_Code-plugin-CC785C?style=flat-square&logoColor=white)](https://claude.ai/code)
 [![Protheus](https://img.shields.io/badge/Protheus-ADVPL%2FTLPP-1a4d5c?style=flat-square&logoColor=white)](https://dataagile-agent-kit.dataagile.com.br)
 [![PO--UI MCP](https://img.shields.io/badge/PO--UI-MCP-22C55E?style=flat-square&logoColor=white)](https://po-ui.io)
@@ -146,7 +146,7 @@ mkdir -p ~/.config/dataagile && echo '{"api_key":"SUA_CHAVE"}' > ~/.config/dataa
 
 | Server | Função |
 |--------|--------|
-| `tbc-knowledge` | Base ADVPL remota — `searchFunction`, `findEndpoint`, `findSmartView`, `findExecAuto`, `findMvcPattern` e mais 4 tools |
+| `tbc-knowledge` | Base ADVPL remota — `searchFunction`, `findEndpoint`, `findSmartView`, `searchKnowledge`, `submitFeedback` + busca vetorial `ragSearchKnowledge`/`ragSearchDocs` |
 | `local-knowledge-external` | Base offline de conhecimento técnico ADVPL/TLPP curado e docs Protheus |
 | `po-ui` | MCP oficial PO-UI — componentes Angular para fronts Protheus, inputs, outputs e exemplos |
 

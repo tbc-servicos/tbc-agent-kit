@@ -11,58 +11,66 @@ description: Referência das APIs TOTVS Fluig — DatasetFactory, DatasetBuilder
 
 # Fluig API Reference
 
-Referência completa das APIs TOTVS Fluig via MCP `tbc-knowledge`.
+Referência das APIs TOTVS Fluig via MCP `tbc-knowledge`.
 
-## Consulta MCP
+## As três tools, e o que cada uma responde
 
-### searchFluigApi — Referência de APIs
+| Tool | O que tem dentro | Use para |
+|---|---|---|
+| `searchKnowledge({ platform: "fluig", keyword })` | conhecimento curado por skill/categoria | convenção, padrão, template, regra de review |
+| `ragSearchKnowledge({ query })` | busca semântica sobre a base de conhecimento | pergunta em linguagem natural, quando você não sabe o termo exato |
+| `ragSearchDocs({ query })` | busca semântica sobre a documentação processada | assinatura de API, parâmetro, comportamento documentado |
 
-Busca documentação de APIs por categoria:
+**Comece pela `searchKnowledge` com o termo técnico exato.** Se não souber o termo, ou
+se a busca por palavra-chave vier vazia, caia para `ragSearchKnowledge`/`ragSearchDocs`,
+que aceitam a pergunta inteira.
 
-```
-searchFluigApi({ category: "dataset" })      // DatasetFactory, DatasetBuilder, constraints
-searchFluigApi({ category: "form" })         // CardAPI, WCMAPI, getValue/setValue, masks
-searchFluigApi({ category: "workflow" })     // WFMovementDTO, variáveis WK*, setTaskUser
-searchFluigApi({ category: "widget" })       // DatasetFactory client-side, REST Protheus
-searchFluigApi({ category: "fluigc" })       // fluigc components (modal, message, etc)
-searchFluigApi({ category: "rest" })         // REST endpoints Fluig
-```
+> A busca por palavra-chave é sensível a acento: `validação` e `validacao` não são o
+> mesmo termo. Na dúvida, tente os dois — ou use a busca semântica.
 
-Busca livre por palavra-chave:
-```
-searchFluigApi({ query: "DatasetFactory createDataset" })
-searchFluigApi({ query: "WKUser WKNumState" })
-searchFluigApi({ query: "jQuery mask CPF" })
-```
+## O que buscar, para quê
 
-### searchFluigPatterns — Padrões e Templates de Código
-
-Busca padrões, convenções e templates por categoria e skill:
+### APIs por área
 
 ```
-searchFluigPatterns({ category: "template", skill: "fluig-dataset" })
-searchFluigPatterns({ category: "template", skill: "fluig-form" })
-searchFluigPatterns({ category: "template", skill: "fluig-workflow" })
-searchFluigPatterns({ category: "template", skill: "fluig-widget" })
-searchFluigPatterns({ category: "naming" })        // convenções de nomenclatura
-searchFluigPatterns({ category: "review" })        // regras de code review
-searchFluigPatterns({ category: "qa" })            // checklist de QA
-searchFluigPatterns({ category: "conventions" })   // boas práticas gerais
+searchKnowledge({ platform: "fluig", keyword: "DatasetFactory" })    // datasets, constraints
+searchKnowledge({ platform: "fluig", keyword: "CardAPI" })           // formulário: getValue/setValue
+searchKnowledge({ platform: "fluig", keyword: "WCMAPI" })            // contexto/sessão do WCM
+searchKnowledge({ platform: "fluig", keyword: "WFMovementDTO" })     // workflow: movimentação
+searchKnowledge({ platform: "fluig", keyword: "fluigc" })            // componentes fluigc (modal, message)
 ```
 
-Busca livre:
+Assinatura ou comportamento que a busca por palavra-chave não devolve:
+
 ```
-searchFluigPatterns({ query: "try catch logging dataset" })
-searchFluigPatterns({ query: "SweetAlert2 validação formulário" })
+ragSearchDocs({ query: "parâmetros do createDataset no Fluig" })
+ragSearchDocs({ query: "quais variáveis WK estão disponíveis no evento de workflow" })
 ```
+
+### Padrões, convenções e templates
+
+```
+searchKnowledge({ platform: "fluig", skill: "dataset", keyword: "template" })
+searchKnowledge({ platform: "fluig", skill: "form", keyword: "validação" })
+searchKnowledge({ platform: "fluig", skill: "workflow", keyword: "evento" })
+searchKnowledge({ platform: "fluig", skill: "widget", keyword: "template" })
+searchKnowledge({ platform: "fluig", keyword: "nomenclatura" })
+searchKnowledge({ platform: "fluig", skill: "review", keyword: "review" })
+```
+
+Vocabulário de `skill` que existe na base: `fluig` · `client-fluig` · `widget` ·
+`form` · `workflow` · `dataset` · `review` · `debug` · `api-ref`. **Não invente
+filtro** — nome de categoria que não existe nos dados devolve vazio, e vazio é lido
+como "não existe padrão para isso", que é a conclusão errada.
 
 ## Quando usar cada tool
 
-| Dúvida | Tool |
-|--------|------|
-| Qual método usar para consultar dataset? | `searchFluigApi({ category: "dataset" })` |
-| Como obter valor de campo no formulário? | `searchFluigApi({ category: "form" })` |
-| Quais variáveis WK* existem no workflow? | `searchFluigApi({ category: "workflow" })` |
-| Como estruturar um dataset corretamente? | `searchFluigPatterns({ category: "template", skill: "fluig-dataset" })` |
-| Qual a convenção de nomenclatura? | `searchFluigPatterns({ category: "naming" })` |
-| O código passa no review? | `searchFluigPatterns({ category: "review" })` |
+| Dúvida | Consulta |
+|--------|----------|
+| Qual método usar para consultar dataset? | `searchKnowledge({ platform: "fluig", keyword: "DatasetFactory" })` |
+| Como obter valor de campo no formulário? | `searchKnowledge({ platform: "fluig", keyword: "getValue" })` |
+| Quais variáveis WK* existem no workflow? | `ragSearchDocs({ query: "variáveis WK disponíveis no workflow Fluig" })` |
+| Como estruturar um dataset corretamente? | `searchKnowledge({ platform: "fluig", skill: "dataset", keyword: "template" })` |
+| Qual a convenção de nomenclatura? | `searchKnowledge({ platform: "fluig", keyword: "nomenclatura" })` |
+| O código passa no review? | `searchKnowledge({ platform: "fluig", skill: "review", keyword: "review" })` |
+| Não sei nem o nome da API que preciso | `ragSearchKnowledge({ query: "<a pergunta inteira>" })` |

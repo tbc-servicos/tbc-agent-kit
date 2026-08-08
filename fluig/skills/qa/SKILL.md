@@ -1,6 +1,6 @@
 ---
 name: qa
-description: Testes de integração e E2E (Playwright) contra servidor Fluig deployado. Aciona fluig:test e fluig-qa teammate. Se riscos ALTOS encontrados, retorna para /fluig:implement. Acione após /fluig:deploy. Próximo passo: /fluig:verify.
+description: Testes de integração e E2E (Playwright) contra servidor Fluig deployado. Roda as specs E2E (JUnit) ou aciona fluig:test-web, e o fluig-qa teammate. Se riscos ALTOS encontrados, retorna para /fluig:implement. Acione após /fluig:deploy. Próximo passo: /fluig:verify.
 disable-model-invocation: true
 ---
 
@@ -8,8 +8,9 @@ Você vai conduzir testes de integração e QA contra os artefatos deployados no
 
 ## HARD GATE
 
-- **Leia `docs/plans/<plan>.gates.json`** e confirme: `deploy.status=ok` e `tests_unit.status=ok`. O arquivo é a fonte de
-  verdade — não confie em afirmação da conversa.
+- **Leia `docs/fluig/plans/<slug>.gates.json`** e confirme: `deploy.status=ok`,
+  `tests_unit.widget.status` e `tests_unit.server.status` ∈ {ok, n/a}, `lint.status=ok`.
+  Não confie em afirmação da conversa — o arquivo é a fonte de verdade (pipeline retomável). O `<slug>` é o basename (sem `.md`) do plano salvo pelo `/fluig:plan` em `docs/fluig/plans/`; havendo mais de um `.gates.json`, pergunte ao dev qual feature.
 
 Não inicie testes de QA se:
 - O deploy não foi realizado com sucesso (não há servidor com os artefatos)
@@ -19,15 +20,27 @@ Verifique que o deploy do Passo 3 anterior foi concluído antes de prosseguir.
 
 ## Passo 1 — Executar testes E2E (Playwright)
 
-Acione a skill `/fluig:test` solicitando execução dos testes E2E contra o servidor deployado:
+Primeiro, **liste os artefatos da task** (do plano) e confira, um a um, qual spec em
+`e2e/` cobre cada um. Spec de demanda anterior não conta como cobertura da task atual.
 
+**1a. Existe spec cobrindo CADA artefato da task** — rode o gate mecânico:
+
+```bash
+mkdir -p logs
+PLAYWRIGHT_JUNIT_OUTPUT_NAME=logs/fluig-e2e.xml npx playwright test --reporter=junit
 ```
-Execute os testes Playwright E2E dos artefatos [nomes] contra o servidor [URL do deploy anterior].
-Se NÃO existirem testes E2E para os artefatos da task: **PARE e gere-os via
-`/fluig:test`** (com aprovação do roteiro) antes de prosseguir — QA sem E2E é
-reprovação automática. Se existirem, execute os existentes (não duplique).
-Use FLUIG_BASE_URL apontando para o servidor (nunca localhost).
-```
+
+Critério: exit 0. Leia o XML (não aceite afirmação da conversa), grave `qa_e2e` no
+`.gates.json` com o caminho do relatório. Falha → screenshot + log do servidor, e
+volta ao `/fluig:implement`.
+
+**1b. Algum artefato da task SEM spec** — **PARE e acione `/fluig:test-web`** para
+esses artefatos (roteiro aprovado → execução com evidências → spec de regressão
+gerado da sessão validada), e só então rode o 1a. QA sem E2E **dos artefatos da
+task** é reprovação automática, não aprovação vazia — suíte antiga verde não aprova
+artefato novo.
+
+Use FLUIG_BASE_URL apontando para o servidor real (homologação ou sandbox do `/fluig:base` — nunca mock/porta morta).
 
 Os testes E2E devem validar:
 - Carregamento dos formulários e datasets no servidor real
@@ -55,7 +68,21 @@ O agente `fluig-qa` acessa o servidor real para validar comportamento e identifi
 
 ## Passo 3 — Avaliar resultados
 
-Revise a análise do fluig-qa:
+Revise a análise do fluig-qa.
+
+### Lista FECHADA de risco ALTO
+
+Qualquer item abaixo é **ALTO por definição** — nada desta lista pode ser rebaixado
+por "parece ok", "cenário improvável" ou impressão visual:
+
+1. Caso de teste E2E cujo critério verificável **não foi encontrado** na tela/snapshot
+2. Erro no log do servidor Fluig durante a execução dos testes (stacktrace, HTTP 5xx)
+3. Dataset devolvendo linha de erro estruturada (ou exceção) em cenário **feliz**
+4. SQL/constraint montado por concatenação de entrada do usuário em código novo
+5. Campo obrigatório do formulário gravando vazio sem validação
+6. Qualquer gate anterior vermelho ou ausente no `.gates.json`
+
+Fora da lista, classifique MÉDIO/BAIXO por julgamento — mas a lista acima não se julga.
 
 ### Se houver riscos ALTO:
 
@@ -91,7 +118,7 @@ Próximo passo: /fluig:verify
 
 ## Regras obrigatórias
 
-- Testes E2E sempre contra servidor real (nunca localhost)
+- Testes E2E sempre contra servidor real (homologação ou sandbox do `/fluig:base` — nunca mock/porta morta)
 - Fluig-qa sempre executado após E2E (análise no servidor live)
 - Riscos ALTOS obrigam retorno para `/fluig:implement` — não pule
 - Riscos MÉDIO/BAIXO são documentados mas não bloqueiam

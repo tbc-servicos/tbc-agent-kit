@@ -4,6 +4,61 @@ Histórico das versões públicas do `dataagile-agent-kit`.
 
 ---
 
+## [2.9.0] — 2026-08-08
+
+### Dataset e evento agora têm teste unitário de verdade (fluig 2.3.0)
+
+O server-side do Fluig rodava sem rede: dataset e evento só eram exercidos depois do
+deploy, no servidor. Agora a `/fluig:test` traz um **harness Node** (`fluig-mock.cjs`) que
+carrega o fonte `ds_*`/`wf_*` **sem alterar nada** num contexto com os globais Fluig
+mockados — o motor do Fluig é Rhino/ES5, subconjunto do que o Node executa. Gate mecânico
+por `node --test` com JUnit e cobertura, mais a checagem que a cobertura não faz: **fonte
+que nenhum teste carrega é invisível no relatório**, então todo artefato tocado pela task
+precisa ter arquivo de teste, independente do percentual. O limite fica dito em voz alta:
+o Node valida a lógica, não o Rhino — interop Java só o QA pega.
+
+O `fluig-lint.sh` passou a **rotear por mundo**: `ds_*`, `wf_*`, `events/` e `Util/` são
+lintados como ES5 (`let`/`const`/arrow/`class` viram erro de parse, porque quebram no
+servidor) e isso roda mesmo em repositório sem `@po-ui`; `.ts` de widget continua no
+ESLint do projeto, com fallback para o config do plugin. Sem ESLint disponível, greps
+mínimos seguram o gate em vez de deixá-lo passar em silêncio.
+
+### E2E saiu da /fluig:test e virou skill própria
+
+Nova **`/fluig:test-web`**: roteiro aprovado antes de executar, screenshot por passo em
+`evidencias/`, critério verificável **literal** (não "a tela parece certa"), tratamento de
+erro com o log do servidor, e — o pulo — a sessão exploratória validada vira **spec de
+regressão versionada** rodada com `--reporter=junit`. Dois modos, uma fonte: a sessão dá a
+evidência, o spec dá o gate determinístico que o `/fluig:qa` consome.
+
+O `/fluig:qa` deixou de aceitar "a suíte está verde": confere artefato por artefato da
+task qual spec o cobre, e artefato sem spec **para o QA** e aciona a `/fluig:test-web`.
+Ganhou também uma **lista fechada de risco ALTO** — seis itens que não se julgam nem se
+rebaixam por impressão visual.
+
+### Memória do ambiente do cliente
+
+Nova **`/fluig:arqueologia`**, a variante de ambiente: sem código-fonte no repositório, o
+mapa da fatia sai do que está **publicado** (REST autenticada do Fluig ou exportações do
+Studio), e o teto de confiança muda junto — LACUNA frequente aqui é informação, não falha.
+Divergência entre repositório e servidor é achado próprio. O `/fluig:plan` ganhou o Passo
+3.5 (o que não pode quebrar, com forma de verificar) e o `/fluig:verify` o writeback do
+Passo 5.5, que só roda **com o deploy concluído** — entrega fantasma no mapa seria uma
+regra CONFIRMADO falsa.
+
+### gates.json unificado e brainstorm por rodadas
+
+O `gates.json` do Fluig passou a viver em `docs/fluig/plans/<slug>.gates.json` com esquema
+único, `tests_unit` dividido em `widget` e `server` (metade sem artefato grava `n/a`
+**explícito**, nunca chave ausente) e um **lint gate global** antes dos reviews — máquina
+antes do LLM. `deploy`, `qa` e `verify` leem o arquivo em vez da conversa.
+
+O `/fluig:brainstorm` ganhou o Passo 0 (levantar os fatos do projeto antes de perguntar
+qualquer coisa), rodadas de fronteira e recomendação rotulada com fonte — com o teto
+correto: a base fluig vem de documentação, então MCP sozinho não passa de INFERIDO. A
+`/fluig:api-ref` foi reescrita sobre as tools que o seu tier realmente expõe, com o
+vocabulário real dos dados.
+
 ## [2.8.0] — 2026-08-08
 
 ### O ciclo Protheus passou a lembrar do legado do cliente (protheus 2.16.0)

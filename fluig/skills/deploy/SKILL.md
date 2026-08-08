@@ -8,10 +8,21 @@ Você vai conduzir o deploy de artefatos Fluig no servidor de teste de forma seg
 
 ## HARD GATE
 
-- **Leia `docs/plans/<plan>.gates.json`** e confirme: `tests_unit.status=ok`, reviews `ok`. O arquivo é a fonte de
-  verdade — não confie em afirmação da conversa.
+- **Leia `docs/fluig/plans/<slug>.gates.json`** e confirme: `tests_unit.widget.status`
+  ∈ {ok, n/a} **e** `tests_unit.server.status` ∈ {ok, n/a} (nunca os dois `n/a` se a
+  feature tem artefato), `lint.status=ok`, `spec_review.status=ok`,
+  `code_review.status=ok`. Não confie em afirmação da conversa — o arquivo é a fonte
+  de verdade (pipeline retomável). O `<slug>` é o basename (sem `.md`) do plano salvo pelo `/fluig:plan` em `docs/fluig/plans/`; havendo mais de um `.gates.json`, pergunte ao dev qual feature.
 
 Não inicie o deploy se as tarefas de implementação não estiverem concluídas. Verifique o status das tarefas antes de prosseguir.
+
+## Alvo: sandbox × homologação
+
+- **Sandbox descartável** (`/fluig:base`, na máquina do dev): alvo do **inner loop**
+  (implementar → deployar → E2E com log limpo → derrubar). Dispensa a confirmação
+  formal de ambiente — mas **o HARD GATE acima vale para os dois alvos**.
+- **Servidor de homologação** (CLAUDE.md do projeto): alvo da **entrega** — fluxo
+  completo abaixo, com confirmação.
 
 ## Passo 1 — Ler contexto do projeto
 

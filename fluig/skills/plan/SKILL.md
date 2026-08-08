@@ -31,7 +31,7 @@ Com base no design, estruture a lista de **arquivos a criar ou modificar**:
 Consulte o MCP para a estrutura do artefato:
 
 ```
-searchFluigPatterns({ skill: "fluig-[tipo]", category: "template" })
+searchKnowledge({ platform: "fluig", skill: "<tipo do artefato>", keyword: "template" })
 ```
 
 Use a estrutura retornada para mapear os arquivos a criar/modificar.
@@ -44,10 +44,11 @@ Estruture o planejamento em **tasks** usando checkbox syntax. Cada task segue o 
 
 ```
 - [ ] **Task 1: Criar dataset ds_meu_dataset**
-  - [ ] Escrever teste unitário Jasmine em `ds_meu_dataset/dataset.spec.ts` (falha esperada)
-  - [ ] Verificar que o teste falha
-  - [ ] Implementar `ds_meu_dataset/dataset.java` com consulta SQL
-  - [ ] Executar `npm test` — teste passa
+  - [ ] Escrever teste unitário em `testes/ds_meu_dataset.test.js` com o harness do plugin
+        (`fluig-mock.cjs` — ver seção server-side de `/fluig:test`) — falha esperada
+  - [ ] Verificar que o teste falha (`node --test testes/ds_meu_dataset.test.js`)
+  - [ ] Implementar `datasets/ds_meu_dataset.js` (ES5/Rhino: var e function, sem let/const)
+  - [ ] Executar `node --test` — teste passa
   - [ ] Commit com mensagem: "feat(dataset): implementar ds_meu_dataset com query [resumo]"
 
 - [ ] **Task 2: Criar widget Angular wg_meu_widget com componente principal**
@@ -79,7 +80,45 @@ Estruture o planejamento em **tasks** usando checkbox syntax. Cada task segue o 
 - Comando exato para executar e validar (ng test, npm test, ng build, etc.)
 - Mensagem de commit esperada
 
+## Passo 3.5 — Regressão: o que não pode quebrar
+
+Artefato Fluig vive em terreno compartilhado: o dataset que a demanda altera alimenta
+outros formulários e widgets; o evento de processo roda para toda solicitação, não só
+para a da demanda; o campo de formulário aparece em relatórios e integrações.
+
+Antes de salvar o plano, escreva `docs/legado/regressao/<slug>.md` — um item por
+comportamento que **existia antes** e que a demanda não pode mudar:
+
+| ID | Origem (artefato + onde, ou `RN-<FATIA>-NN`) | O que precisa continuar verdadeiro | Como verificar | Sinal de violação |
+|---|---|---|---|---|
+| W001 | `ds_clientes` (constraint `ativo`) | Widget de consulta continua listando só clientes ativos | teste harness `testes/ds_clientes.test.js` | cliente inativo aparece na lista |
+
+Regras:
+- **Só entra item CONFIRMADO** (fato lido do projeto ou do ambiente — mapa da
+  `/fluig:arqueologia`). INFERIDO/LACUNA vai para "Observações", sem peso de regressão.
+- Cada item vira teste do harness (`node --test`), cenário de spec E2E (`e2e/`), ou
+  checagem manual nomeada no `/fluig:verify`. Item sem forma de verificar é
+  observação.
+- **IDs estáveis e append-only.** Item que deixou de valer vai para "Arquivadas" com
+  o motivo e a data — nunca apagado.
+- Esta lista cobre só o que **existia antes**. O comportamento que esta demanda
+  **criar** entra na mesma lista no writeback do `/fluig:verify`, depois do QA.
+
+Adicione a linha `**Regressão:** docs/legado/regressao/<slug>.md` (ou "não se aplica —
+justificativa") ao cabeçalho do plano.
+
 ## Passo 4 — Salvar plano em docs/fluig/plans/
+
+Ao salvar o plano, grave também `docs/fluig/plans/<slug>.gates.json` (slug = basename
+do plano, sem `.md`) — o estado dos gates que `/fluig:implement`, `deploy`, `qa` e
+`verify` leem:
+
+```json
+{ "slug": "<slug>", "plan": { "status": "ok", "file": "docs/fluig/plans/<slug>.md" } }
+```
+
+Se já existir um `.gates.json` com este slug, atualize só a chave `plan` e preserve
+as demais (sobrescrever apagaria gates de execução já conquistados).
 
 Crie ou use o diretório `docs/fluig/plans/` no projeto. Salve o plano com nome:
 ```
@@ -155,3 +194,10 @@ Se precisar de informação não disponível no MCP, consulte o RAG:
 ```
 searchKnowledge({ keyword: "<termo relevante>" })
 ```
+
+## Rastreabilidade task → teste → evidência
+
+- Numere as tasks com ID estável (`T1`, `T2`, …) no plano.
+- O teste de cada task referencia o ID: `describe('T1 — …')` e commit `feat(T1): …`.
+- O spec-reviewer verifica "cada task tem teste com o ID dela"; evidências E2E em
+  `evidencias/<plan-id>/`.

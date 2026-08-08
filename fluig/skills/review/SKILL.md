@@ -71,7 +71,7 @@ Acione a skill `/fluig:test` solicitando execução dos testes E2E:
 Se não houver testes E2E ainda:
 > "Gere e execute os testes Playwright E2E para o artefato [nome] contra o servidor [URL]."
 
-Os testes E2E usam `FLUIG_BASE_URL` apontando para o servidor do Passo 3 — nunca localhost.
+Os testes E2E usam `FLUIG_BASE_URL` apontando para o servidor do Passo 3 — servidor real: homologação ou sandbox do /fluig:base.
 
 **Se os testes E2E falharem:** corrija o artefato, redeploy (Passo 3) e execute novamente.
 
@@ -115,7 +115,7 @@ Próximo passo: /fluig:verify → deploy final
 - Os 5 passos são sequenciais — nunca em paralelo
 - Testes unitários antes do deploy (Jasmine/Karma rodam localmente)
 - Deploy obrigatório antes dos testes E2E (Playwright exige servidor real)
-- E2E nunca usa localhost — sempre o servidor do Passo 3
+- E2E usa servidor real: homologação ou o sandbox do /fluig:base — sempre o servidor do Passo 3
 - Sempre ler CLAUDE.md para saber servidor e prefixo antes de acionar qualquer agente
 - Sempre confirmar com o usuário antes de fazer qualquer deploy
 

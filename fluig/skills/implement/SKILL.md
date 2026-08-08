@@ -14,6 +14,13 @@ Não proceda se:
 
 Se algum desses pontos faltar, peça ao usuário para primeiro executar `/fluig:plan`.
 
+## Passo 0 — Retomar, se houver estado
+
+Leia `docs/fluig/plans/<slug>.gates.json` antes de criar qualquer time. Estágios de
+execução na ordem: `tests_unit` (duas metades) → `lint` → `spec_review` →
+`code_review` → `deploy` → `qa_e2e`. Entre no primeiro estágio não-`ok` e diga ao dev
+o que já passou. Sem `.gates.json` → recomende `/fluig:plan`.
+
 ## Pré-requisitos
 
 - **Agent Teams** habilitado: `export CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`
@@ -29,16 +36,39 @@ Se Agent Teams não estiver habilitado, informe o usuário e caia no fallback (s
 | fluig-implementer | **sonnet** | Implementação — exige raciocínio sobre regra de negócio |
 | fluig-spec-reviewer | **sonnet** | Verificação de conformidade com spec |
 | fluig-reviewer | **sonnet** | Qualidade de código Fluig |
-| Opus | **só no brainstorm** | O design já foi feito em opus (`/fluig:brainstorm`). Nenhum teammate escala sozinho |
+| Opus | **só no brainstorm** | O design já foi feito em opus (`/fluig:brainstorm`). Nenhum teammate escala para opus por conta própria |
 | Haiku | **não usar aqui** | Haiku só em deploy (`fluig-deployer`) |
 
 
 ## Artefato de estado dos gates (gates.json)
 
-Todo veredito de gate é GRAVADO em `docs/plans/<plan>.gates.json` — a skill seguinte LÊ o
-arquivo em vez de confiar na memória da conversa. Atualize a chave do estágio ao concluí-lo:
-`{ "tests_unit": {...}, "spec_review": "ok", "code_review": "ok", "lint": "ok", "deploy": {...}, "qa_e2e": {...} }`.
-Pipeline retomável: sessão nova lê o arquivo e continua de onde parou.
+Todo veredito de gate é GRAVADO em `docs/fluig/plans/<slug>.gates.json` (o slug é o basename, sem `.md`, do plano
+salvo pelo `/fluig:plan`) — a skill seguinte LÊ o arquivo em vez de confiar na
+memória da conversa (doc oficial: "hooks/artefatos são determinísticos; instruções
+são consultivas"). Esquema único — toda chave é objeto com `status`:
+
+```json
+{
+  "slug": "2026-07-12-aprovacao-desconto",
+  "plan": { "status": "ok", "file": "docs/fluig/plans/2026-07-12-aprovacao-desconto.md" },
+  "tests_unit": {
+    "widget": { "status": "ok", "coverage_lines": 84.2, "report": "coverage/coverage-summary.json" },
+    "server": { "status": "ok", "failures": 0, "junit": "logs/fluig-unit.xml" }
+  },
+  "lint": { "status": "ok" },
+  "spec_review": { "status": "ok" },
+  "code_review": { "status": "ok" },
+  "deploy": { "status": "ok", "servidor": "https://fluig-hml.cliente.com.br" },
+  "qa_e2e": { "status": "ok", "cenarios": 5, "junit": "logs/fluig-e2e.xml" }
+}
+```
+
+`tests_unit` tem **duas metades**: `widget` (runner Angular) e `server` (harness Node
+para datasets/eventos). Feature sem artefato de um dos lados grava
+`{ "status": "n/a" }` naquela metade — `n/a` explícito, nunca chave ausente.
+
+Atualize a chave correspondente ao concluir cada estágio. Pipeline vira retomável:
+sessão nova lê o arquivo e continua de onde parou.
 
 ## Estágio 0 — Criar Agent Team
 
@@ -91,14 +121,42 @@ Aguarde resposta. Possíveis status:
 
 ### 2a-gate. Testes e cobertura (executado pelo ORQUESTRADOR)
 
-Antes de despachar reviews, **você mesmo** valida (self-report do implementer NÃO aprova):
+Antes de despachar reviews, **você mesmo** valida (self-report do implementer NÃO
+aprova). São **duas metades** — rode a(s) que a task tocou:
+
+**Widget** (task mexeu em `.ts`/workspace Angular):
 
 ```bash
 npm test -- --watch=false --browsers=ChromeHeadless --code-coverage
 ```
 
-Verde é o critério mecânico (com o karma.conf do template, cobertura < 70% já FALHA).
-Vermelho → devolva ao implementer; **máximo 3 ciclos** — no 3º, pare e reporte ao dev.
+- Verde é o critério mecânico (com `skills/test/assets/karma.conf.template.js`,
+  cobertura global < 70% já FALHA aqui — se o projeto não tem o check, copie o
+  template; projeto no builder novo usa `coverageThresholds` do `angular.json`).
+- Leia `coverage/coverage-summary.json`, registre o % real e grave
+  `tests_unit.widget` no `.gates.json`.
+
+**Server-side** (task mexeu em `ds_*`, `wf_*`, `events/`):
+
+```bash
+mkdir -p logs
+node --test --test-reporter=junit --test-reporter-destination=logs/fluig-unit.xml \
+     --experimental-test-coverage --test-coverage-lines=70 \
+     --test-coverage-include='**/ds_*.js' --test-coverage-include='**/wf_*.js' \
+     --test-coverage-include='**/events/**' 'testes/**/*.test.js'
+```
+
+- Critério mecânico: exit 0 **e** `fail 0` no `logs/fluig-unit.xml` — **e** todo
+  `ds_*`/`wf_*`/evento tocado pela task tem arquivo de teste correspondente
+  (cobertura não enxerga arquivo que nenhum teste carrega: fonte sem teste passa
+  o threshold em silêncio — confira a existência um a um). Grave
+  `tests_unit.server` no `.gates.json`.
+- Harness e armadilhas (filename absoluto, `deepEqual`, globs desancorados,
+  `mkdir -p logs`): ver a seção server-side de `/fluig:test`.
+
+Metade sem artefato na feature: grave `{ "status": "n/a" }` — explícito, nunca omitido.
+Vermelho em qualquer metade → devolva ao implementer com a saída; **máximo de 3
+ciclos** de correção — no 3º vermelho, pare e reporte ao dev com o histórico.
 
 ### 2b. Dispatch para fluig-spec-reviewer (sonnet)
 
@@ -147,11 +205,27 @@ Se o implementador usou worktree isolado:
 
 Quando todas as tasks estiverem ✅:
 
-### 3a. Validação final global
+### 3a. Lint gate global (máquina antes do LLM)
+
+Rode o ESLint sobre **todos** os artefatos da feature, com os configs do plugin
+quando o projeto não tiver os seus:
+
+```bash
+# server-side (ds_*, wf_*, events/)
+npx eslint --config ${CLAUDE_PLUGIN_ROOT}/skills/test/assets/eslint.server.config.mjs <arquivos ds_/wf_/events>
+# widget (se o projeto não tem eslint próprio)
+npx eslint --config ${CLAUDE_PLUGIN_ROOT}/skills/test/assets/eslint.widget.config.mjs <arquivos .ts>
+```
+
+Critério mecânico: exit 0 nos dois. Grave `lint` no `.gates.json`. Erro → devolva ao
+implementer (mesmo teto de 3 ciclos). Supressão (`eslint-disable`) só com justificativa
+na mesma linha — e o reviewer reporta mesmo suprimido.
+
+### 3b. Validação final global
 
 Dispatch `fluig-reviewer` para validação de todos os artefatos juntos.
 
-### 3b. Anunciar conclusão
+### 3c. Anunciar conclusão
 
 ```
 Implementação concluída

@@ -41,6 +41,26 @@ Analisar o contexto da conversa e propor:
 
 ---
 
+## Passo 2.5 — Checar duplicata e contradição (antes de mostrar o rascunho)
+
+A KB não tem supersessão automática — dois feedbacks contraditórios convivem, e quem
+busca pode seguir o errado. Antes do Passo 3, busque o tema:
+
+```
+searchKnowledge({ keyword: "<termo central do erro>", limit: 5 })
+```
+
+Se vier registro próximo, mostre ao dev junto com o rascunho e pergunte:
+
+> "Encontrei este(s) aprendizado(s) relacionado(s). O seu **complementa**, **corrige**
+> ou **duplica** algum deles?"
+
+- **Corrige** → abra o rascunho com a linha `⚠️ CORRIGE aprendizado de <data/autor>:`
+  no campo ERRO, para quem buscar depois achar a versão nova junto da velha.
+- **Duplica** → não submeta; avise o dev que já existe.
+
+---
+
 ## Passo 3 — Dev revisa e aprova
 
 Apresentar o rascunho e perguntar:
@@ -48,6 +68,20 @@ Apresentar o rascunho e perguntar:
 > "Esse rascunho está correto? Pode editar qualquer campo antes de confirmar."
 
 Aguardar resposta. Aplicar edições se o dev solicitar. Só avançar após aprovação explícita.
+
+---
+
+## Passo 3.5 — Candidato a promoção? (ANTES de submeter — a tag entra no payload)
+
+Junto da aprovação do rascunho, pergunte:
+
+> "Esse erro é provável de se repetir com outros devs? Se sim, qual skill deveria
+> **impedir** isso (reviewer, widget, dataset, hook de lint...)?"
+
+Se o dev apontar destino, acrescente `promote:<skill>` (ex.: `promote:reviewer`) às
+TAGS do rascunho **antes** do Passo 4 — o `submitFeedback` não tem update: tag que
+não entra na submissão não existe. É o filtro que a revisão periódica usa para
+decidir o que sai da KB e vira regra de skill.
 
 ---
 
