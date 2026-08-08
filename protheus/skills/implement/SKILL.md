@@ -6,8 +6,26 @@ disable-model-invocation: true
 
 ## Instruções para Claude
 
-Leia o plano mais recente em `docs/plans/` (arquivo terminado em `-plan.md`).
-Se não houver plano, recomende `/protheus:plan` primeiro.
+Leia o plano da feature ativa (ver Passo 0). Se não houver plano, recomende
+`/protheus:plan` primeiro.
+
+---
+
+## Passo 0 — Retomar, se houver estado
+
+Leia `docs/plans/<slug>.gates.json` **antes de criar qualquer time**. O estágio vem
+do arquivo, nunca da memória da conversa. A varredura de retomada olha **só os
+estágios de execução**, nesta ordem: `spec_review` → `code_review` → `lint` →
+`deploy` → `qa_e2e` (`design` e `plan` ficam fora — têm vocabulário próprio):
+
+- Arquivo com `plan.status = "ok"` e sem estágio de execução gravado → comece do
+  Estágio 0.
+- Estágios de execução parciais (ex.: `spec_review.status = "ok"`, `code_review`
+  ausente) → entre no primeiro estágio de execução cuja chave ainda não está
+  `"status": "ok"`, e diga ao dev o que já passou e de onde vai continuar.
+- Mais de um `.gates.json` com `plan.status = "ok"` e execução incompleta → liste e
+  pergunte qual retomar.
+- Sem `.gates.json` → recomende `/protheus:plan`.
 
 ---
 
@@ -36,10 +54,33 @@ Se Agent Teams não estiver habilitado, informe o usuário e caia no fallback (E
 
 ## Artefato de estado dos gates (gates.json)
 
-Todo veredito de gate é GRAVADO em `docs/plans/<plan>.gates.json` — a skill seguinte LÊ o
-arquivo em vez de confiar na memória da conversa. Atualize a chave do estágio ao concluí-lo:
-`{ "tests_unit": {...}, "spec_review": "ok", "code_review": "ok", "lint": "ok", "deploy": {...}, "qa_e2e": {...} }`.
-Pipeline retomável: sessão nova lê o arquivo e continua de onde parou.
+Todo veredito de gate é GRAVADO em `docs/plans/<slug>.gates.json` — o **mesmo arquivo
+que o `/protheus:brainstorm` criou** ao aprovar o design (o slug é o da feature, sem
+sufixo `-plan`). Nunca crie um segundo arquivo. A skill seguinte LÊ o arquivo em vez
+de confiar na memória da conversa (doc oficial: "hooks/artefatos são determinísticos;
+instruções são consultivas"). Esquema único:
+
+```json
+{
+  "slug": "2026-07-12-fat-desconto",
+  "design": { "status": "aprovado", "doc": "docs/plans/2026-07-12-fat-desconto-design.md" },
+  "plan":   { "status": "ok", "file": "docs/plans/2026-07-12-fat-desconto-plan.md" },
+  "spec_review": { "status": "ok" },
+  "code_review": { "status": "ok" },
+  "lint": { "status": "ok" },
+  "deploy": { "status": "ok", "patch": "patch_20260712.ptm" },
+  "qa_e2e": { "status": "ok", "cenarios": 5 }
+}
+```
+
+Regras do esquema:
+- Toda chave é **objeto com `status`** — nunca string solta.
+- `design` e `plan` têm vocabulário próprio (`aprovado`/`pendente`/`ok`) e ficam
+  **fora** da varredura de retomada do Passo 0.
+- Os estágios de **execução**, na ordem: `spec_review` → `code_review` → `lint` →
+  `deploy` → `qa_e2e`. Atualize a chave ao concluir cada um.
+
+Pipeline vira retomável: sessão nova lê o arquivo e continua de onde parou.
 
 ## Estágio 0 — Criar Agent Team
 

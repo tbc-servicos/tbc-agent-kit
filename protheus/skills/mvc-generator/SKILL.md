@@ -160,6 +160,13 @@ Run through the MVC Generation Checklist below to verify completeness.
 
 ---
 
+## MVC in TLPP (.tlpp) — KB learning
+
+MVC in `.tlpp` requires: declare the `Namespace`, use `user function` (not
+`static`), and reference with the **full namespace + `U_`** in `SetMenuDef`,
+`FWLoadModel` and button `Action`s — otherwise the buttons do not show up in
+FwMBrowse and the browse loads empty.
+
 ## Troubleshooting
 
 - **"Field not found in SX3"**: The field referenced in `FWFormStruct` must exist in the data dictionary (SX3). Run `CFGX023()` or use SIGACFG to register missing fields.

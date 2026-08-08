@@ -172,6 +172,13 @@ WHERE SA1.D_E_L_E_T_ = ' '
 
 ---
 
+## Dialect pitfalls (from the KB)
+
+- `ORDER BY A, B DESC` applies `DESC` **only to B** — repeat the direction on
+  each column (`A DESC, B DESC`) when everything must be descending.
+- Subquery alias **without** `AS` (`FROM (SELECT ...) SUB`) — Oracle rejects
+  `AS` in that position; without it the query works on both Oracle and MSSQL.
+
 ## SQL Injection Prevention
 
 **Never concatenate user input directly into SQL strings.** Use `FWExecStatement` to parameterize all dynamic values.

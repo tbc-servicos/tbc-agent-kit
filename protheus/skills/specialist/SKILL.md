@@ -44,19 +44,19 @@ Use as tools do MCP `tbc-knowledge`:
 `findSmartView({ keyword: "<termo>", team: "SIGAXXX" })`
 
 **Para ExecAuto:**
-`findExecAuto({ target: "<rotina>" })`
+`findExecAuto({ target: "<rotina>" })` — (se disponível no seu tier — senão use `ragSearchKnowledge`)
 
 **Para MVC:**
-`findMvcPattern({ model_id: "<rotina>", table: "<alias>" })`
+`findMvcPattern({ model_id: "<rotina>", table: "<alias>" })` — (se disponível no seu tier — senão use `ragSearchKnowledge`)
 
 **Para busca por tabela (cross-search):**
-`searchByTable({ table: "<alias>" })`
+`searchByTable({ table: "<alias>" })` — (se disponível no seu tier — senão use `ragSearchKnowledge`)
 
 **Para funções específicas:**
 `searchFunction({ name: "<nome>", module: "<modulo>" })`
 
 **Para listar módulos:**
-`listModules()`
+`listModules()` — (se disponível no seu tier — senão use `searchFunction` por módulo)
 
 ### 3. Consulte os Padrões e Convenções
 
@@ -76,15 +76,42 @@ searchKnowledge({ keyword: "<termo relevante>" })
 
 ### 5. Consulte Material de Treinamento
 
-`searchDocuments({ keyword: "<termo>" })`
+`ragSearchDocs({ query: "<termo>" })`
+
+### 5.5. Classifique a confiança de cada afirmação
+
+Toda afirmação técnica que você levar para a análise sai com um rótulo e a fonte:
+
+| Rótulo | Quando usar | Fonte que sustenta |
+|---|---|---|
+| **CONFIRMADO** | o comportamento está no código do ERP destilado na KB, ou você leu o fonte do projeto | retorno do MCP com assinatura/rotina + arquivo:linha do projeto |
+| **INFERIDO** | o padrão é consistente com o que a KB e a doc mostram, mas nada afirma este caso | TDN, `ragSearchDocs`, analogia com rotina parecida |
+| **LACUNA** | depende do ambiente do cliente, de parâmetro ou de dado que você não tem | nada — é pergunta para o dev ou consulta ao ambiente |
+
+**Teto por proveniência.** A KB protheus tem conhecimento destilado de código-fonte
+do ERP: resposta sobre assinatura, ExecAuto ou padrão MVC pode chegar a **CONFIRMADO**.
+Conhecimento que vem só de documentação (TDN, docs processadas) tem teto **INFERIDO** —
+documentação descreve a intenção; só o código prova o comportamento.
+
+**Dicionário de dados:** `terminaldeinformacao.com` e a KB entregam o dicionário
+**padrão** — é INFERIDO até conferir no SX3 do ambiente do cliente, porque
+customização de dicionário é a regra, não a exceção.
+
+Regras:
+- Sem fonte, **não escreva a linha**. Omitir é honesto; preencher por dedução é o que
+  faz o dev descobrir em produção que o campo era `C` e não `N`.
+- Nunca promova INFERIDO a CONFIRMADO sem ter ido buscar. "Provavelmente é assim"
+  continua INFERIDO.
+- Na dúvida, o rótulo mais baixo. Uma LACUNA honesta custa uma pergunta; um
+  CONFIRMADO errado custa o retrabalho inteiro.
 
 ### 6. Apresente Análise + Recomendação
 
-Antes de gerar código, apresente:
+Antes de gerar código, apresente (cada afirmação com o rótulo da seção 5.5):
 1. O que encontrou na Knowledge Base
 2. O que encontrou no TDN
 3. Abordagem recomendada
-4. Riscos/Considerações
+4. Riscos/Considerações — LACUNAs listadas explicitamente
 
 ### 7. Gere o Código
 

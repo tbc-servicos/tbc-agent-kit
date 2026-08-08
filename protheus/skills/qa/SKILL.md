@@ -10,7 +10,7 @@ Você vai conduzir testes E2E e análise de qualidade contra os artefatos compil
 
 ## HARD GATE
 
-- **Leia `docs/plans/<plan>.gates.json`** e confirme: `deploy.status=ok` e `tests_unit.status=ok`. O arquivo é a fonte de
+- **Leia `docs/plans/<plan>.gates.json`** e confirme: `deploy.status=ok`. O arquivo é a fonte de
   verdade — não confie em afirmação da conversa.
 
 Não inicie testes se:

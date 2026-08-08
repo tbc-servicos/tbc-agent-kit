@@ -6,18 +6,32 @@ disable-model-invocation: true
 
 ## Instruções para Claude
 
-Leia o design doc mais recente em `docs/plans/` antes de começar.
-Se não houver design doc, recomende `/protheus:brainstorm` primeiro.
+Derive a feature ativa dos `docs/plans/*.gates.json` — do arquivo, nunca da memória
+da conversa. Se não houver `.gates.json` nem design doc, recomende
+`/protheus:brainstorm` primeiro.
 
 ---
 
 ## Passo 1 — Ler o design aprovado
 
-```bash
-ls -t docs/plans/*.md | head -3
-```
+Liste os `docs/plans/*.gates.json` e derive o estágio de cada feature **do arquivo**:
 
-Leia o design doc identificado. Extraia:
+| Estado observado no `.gates.json` | Estágio | Próximo passo |
+|---|---|---|
+| `design.status != "aprovado"` | design em aberto | volte ao `/protheus:brainstorm` |
+| `design` aprovado, `plan.status = "pendente"` | pronto para planejar | siga este skill |
+| `plan.status = "ok"`, gates de execução ausentes | plano pronto | `/protheus:implement` |
+| gates de execução parciais | implementação em andamento | `/protheus:implement` (retoma) |
+
+Se houver **mais de uma** feature com `design` aprovado e `plan` pendente, liste-as
+numeradas com data e slug e **pergunte qual planejar**. Nunca escolha a mais recente
+por conta própria: o dev pode estar voltando a uma feature da semana passada, e
+planejar a errada só aparece no review — depois de o implementer já ter escrito código.
+
+Design doc antigo sem `.gates.json` (anterior a esta versão): confirme com o dev qual
+arquivo usar antes de seguir.
+
+Leia o design doc da feature escolhida. Extraia:
 - Lista de artefatos a implementar (nome do arquivo, tipo, responsabilidade)
 - Módulo Protheus (FAT, FIN, EST, COM, RH…)
 - Tabelas envolvidas
@@ -118,6 +132,75 @@ Bloqueio: compilação bem-sucedida (RPO atualizado)
 
 ---
 
+## Passo 3.5 — Regressão: o que não pode quebrar
+
+Toda customização Protheus mexe em terreno compartilhado: um PE roda dentro de rotina
+TOTVS que outras customizações também usam; um campo `X_` novo entra em tabela que a
+rotina padrão grava; um ExecAuto muda o que rotinas a jusante leem.
+
+### Alcance medido — o que o plano não previu
+
+Rode esta medição **antes de escrever o arquivo de regressão** — se a resposta for
+REDESENHA, nenhum arquivo órfão fica para trás. Varra os callers e **confronte a
+varredura com a lista fechada de fontes do Passo 2**, separando o que ela atinge
+fora dela.
+
+Para cada função, PE ou campo que a demanda altera:
+
+```bash
+grep -rn "U_<Funcao>\|<PE>\|<CAMPO>" --include="*.prw" --include="*.tlpp" .
+```
+
+Referência que cai em fonte **fora da lista do plano** é alcance não previsto. Antes de
+salvar o plano, apresente ao dev e espere resposta:
+
+> Alcance medido de **<feature>**:
+> - Fontes no plano: `<lista>`
+> - Atingidos fora do plano: `<arquivo:linha — quem usa>` (ou "nenhum")
+>
+> 1. **SEGUE** — cada atingido vira item na tabela de regressão abaixo
+> 2. **REDESENHA** — o alcance mostra que a demanda é maior que o desenhado; volta ao
+>    `/protheus:brainstorm`
+
+Se a varredura não for possível (o caller está em fonte padrão TOTVS que não está no
+repo), diga isso com todas as letras: "alcance não medido" é informação. Silêncio vira
+"não tem impacto", que é a frase que costuma preceder o incidente.
+
+Antes de salvar o plano, escreva `docs/legado/regressao/<slug>.md` — um item por
+comportamento que **existia antes** e precisa continuar existindo depois.
+
+Fonte dos itens, nesta ordem:
+1. Regras CONFIRMADO de `docs/legado/<fatia>.md` (se o mapa da `/protheus:arqueologia`
+   existir) que a demanda toca de raspão
+2. Comportamento de PE que outras rotinas dependem
+3. Campo de tabela padrão que outra rotina TOTVS também grava
+4. Retorno de função com caller fora da demanda (`grep -rn "U_<Funcao>"`)
+
+| ID | Origem (`arquivo:linha` ou `RN-<MOD>-NN`) | O que precisa continuar verdadeiro | Como verificar | Sinal de violação |
+|---|---|---|---|---|
+| W001 | `RFATA001.prw:210` (`RN-FAT-03`) | Pedido sem transportadora continua gravando com frete zero | cenário E2E `W001` no plano de QA (`/protheus:qa` → `/protheus:test-web`) | pedido sem transportadora passa a bloquear a gravação |
+
+Regras:
+- **Só entra item CONFIRMADO.** Comportamento INFERIDO ou LACUNA vai para uma seção
+  "Observações", sem peso de regressão — vigiar o que você não confirmou produz alarme
+  falso, e alarme falso mata o arquivo em duas demandas.
+- **IDs são estáveis e append-only.** Item que deixou de valer não é apagado: vai para
+  a seção "Arquivadas" **com o motivo e a data** — o motivo é o que impede a próxima
+  demanda de reintroduzir o problema que esta resolveu.
+- **Todo item verificável vira cenário E2E no plano de QA** — o `W001` entra no escopo
+  da task de testes E2E do Passo 3, nomeado pelo ID, e é lá que ele é exercido. Item
+  que só dá para conferir lendo o fonte entra como **inspeção nomeada** (`arquivo:linha`
+  a conferir no `/protheus:verify`). Item sem forma de verificar é observação, não item
+  de regressão.
+
+Esta lista cobre só o que **existia antes**. O comportamento que esta demanda
+**criar** entra na mesma lista no Passo 2.5 do `/protheus:verify`, depois do E2E.
+
+Na demanda seguinte que tocar a mesma fatia, o `/protheus:brainstorm` lê este arquivo
+no Passo 1 e cada item vira **restrição** do design — não sugestão.
+
+---
+
 ## Passo 4 — Salvar o plano
 
 Salve o plano completo em:
@@ -125,6 +208,9 @@ Salve o plano completo em:
 ```
 docs/plans/YYYY-MM-DD-[modulo]-[descricao]-plan.md
 ```
+
+E atualize o `.gates.json` da feature:
+`"plan": { "status": "ok", "file": "docs/plans/<arquivo>-plan.md" }`
 
 Formato do plano:
 
@@ -134,6 +220,7 @@ Formato do plano:
 **Design:** docs/plans/[design-doc].md
 **Módulo:** [MOD]
 **Data:** YYYY-MM-DD
+**Regressão:** docs/legado/regressao/[slug].md (ou "não se aplica — justificativa")
 
 ## Tasks de Implementação
 
@@ -174,3 +261,10 @@ Se precisar de informação não disponível no MCP, consulte o RAG:
 ```
 searchKnowledge({ keyword: "<termo relevante>" })
 ```
+
+## Rastreabilidade task → verificação → evidência
+
+- Numere as tasks com ID estável (`T1`, `T2`, …) no plano.
+- Cada cenário E2E referencia o ID da task ou do item de regressão que exercita
+  (`T1: …`, `W001: …`), para o `/protheus:verify` conseguir dar veredito item a item.
+- Evidências E2E ficam em `evidencias/<plan-id>/`.

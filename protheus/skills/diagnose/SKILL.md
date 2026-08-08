@@ -29,6 +29,16 @@ Consulte a referência completa via MCP:
 searchKnowledge({ skill: "protheus-diagnose", keyword: "erros compilacao" })
 ```
 
+**Rotule a causa raiz antes de propor correção** (escala do `/protheus:specialist`:
+CONFIRMADO / INFERIDO / LACUNA):
+
+- **CONFIRMADO** — a mensagem de erro, o log ou o fonte mostram a causa. Pode corrigir.
+- **INFERIDO** — a causa é a mais provável pelo padrão do erro, mas o log não prova.
+  Diga isso ao dev e proponha o teste que confirma **antes** de mexer no código.
+- **LACUNA** — falta informação (log truncado, ambiente inacessível, erro não
+  reproduzido). Peça o que falta. Não proponha correção sobre LACUNA: vira palpite
+  com aparência de diagnóstico, e o dev passa a tarde testando a hipótese errada.
+
 ### Fase 3 — Propor correção
 
 - Explicar a causa raiz com clareza

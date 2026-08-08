@@ -6,6 +6,7 @@ REPO="$(cd "$(dirname "$0")/.." && pwd)"
 FAIL=0
 run() { echo; echo "━━ $1"; shift; "$@" || FAIL=1; }
 
+run "hooks: advpl-encoding-pre (bloqueio)" "$REPO/tests/hooks/advpl-encoding-pre.test.sh"
 run "hooks: advpl-lint"                    "$REPO/tests/hooks/advpl-lint.test.sh"
 run "hooks: fluig-lint"                    "$REPO/tests/hooks/fluig-lint.test.sh"
 run "hooks: sonar-engine (regras EngPro)"  node --test "$REPO/tests/hooks/sonar-engine.test.cjs"
