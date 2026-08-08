@@ -5,7 +5,7 @@ description: Gera código ADVPL/TLPP para Protheus seguindo obrigatoriamente: no
 
 ## Guardrails anti-alucinação (OBRIGATÓRIO)
 
-- **Antes de gerar:** *Validação de Símbolos da API* — toda função/classe/método/namespace deve existir na doc (TDN), no MCP (`searchFunction`/`searchByTable`) ou em `references`. Nunca inferir símbolo de memória (causa #1 de `Cannot find method`/`Class not found`).
+- **Antes de gerar:** *Validação de Símbolos da API* — toda função/classe/método/namespace deve existir na doc (TDN), no MCP (`searchFunction`/`ragSearchDocs`) ou em `references`. Nunca inferir símbolo de memória (causa #1 de `Cannot find method`/`Class not found`).
 - **Depois de gerar:** *Verificação de Completude* — gap analysis item a item; nada omitido em silêncio.
 - Refs: [`../reviewer/references/validacao-simbolos-e-completude.md`](../reviewer/references/validacao-simbolos-e-completude.md) · qualidade G1–G5: [`../reviewer/references/sonarqube-rules-reference.md`](../reviewer/references/sonarqube-rules-reference.md).
 
@@ -42,8 +42,8 @@ searchKnowledge({ skill: "protheus-patterns", keyword: "notacao hungara" })
 # Verificar se já existe função/PE padrão para o caso
 searchFunction({ name: "<funcao>", module: "<MOD>" })
 findEndpoint({ keyword: "<rotina>" })
-findExecAuto({ target: "<rotina>" })
-findMvcPattern({ table: "<alias>" })
+findExecAuto({ target: "<rotina>" })   # (se disponível no seu tier — senão use ragSearchKnowledge)
+findMvcPattern({ table: "<alias>" })   # (se disponível no seu tier — senão use ragSearchKnowledge)
 ```
 
 **Ordem de prioridade das fontes:**
@@ -68,6 +68,15 @@ Antes de gerar qualquer codigo, pergunte:
 > Nome do arquivo gerado: `R[MOD][TYPE][SEQ].prw` — ex: `RFATA001.prw`
 
 ---
+
+## Regras de campo (aprendizados da KB)
+
+- **Nunca** abrir `FWMsgRun`/`MsgRun`/`MSDialog` dentro do `VALID`/`bValid` de um
+  campo — o painel disputa foco com o VALID pendente e a tela trava (deadlock de
+  foco). Processamento longo sai do VALID.
+- Parâmetro/variável **tipado** (`as Date`, `as Character`…): testar com
+  `Empty(var)` — `var != NIL` gera `Incompatible types`. E o `advpls appre` não
+  pega erro de tipo: lint limpo não garante compilação.
 
 ## Base de Conhecimento (MCP)
 

@@ -62,6 +62,12 @@ searchKnowledge({ skill: "protheus-patterns", keyword: "tratamento erros" })
 
 Padrões de busca com MsSeek, gravação com RecLock, commit e rollback.
 
+- `RecLock`/`MsUnlock` sempre em par e **sempre com alias explícito**:
+  `<ALIAS>->(MsUnlock())`, nunca `MsUnlock()` solto — solto ele destrava a workarea
+  corrente, que pode não ser a que você travou se o posicionamento mudou no meio.
+- Depois de `Posicione()`/`DbSeek()`/`MSSeek()` o alias fica **posicionado**: leia os
+  demais campos com `ALIAS->CAMPO`. Não repita o `Posicione()` campo a campo.
+
 Consulte a referência completa via MCP:
 ```
 searchKnowledge({ skill: "protheus-patterns", keyword: "banco dados" })
@@ -83,6 +89,11 @@ searchKnowledge({ skill: "protheus-patterns", keyword: "dicionario dados" })
 ## Pontos de Entrada — Padrao MVC e Legado
 
 Regra de unicidade: 1 PE por arquivo. Padrão MVC e padrão legado com exemplos.
+
+**Momento certo do PE.** Validação **bloqueante** vai em PE de validação
+(`MT100TOK`, `MODELPOS`/`FORMPOS`/`FORMLINEPOS`), que roda ANTES da gravação e cujo
+retorno `.F.` aborta. PE **pós-gravação** (`MT103FIN`/`MT103FIM`, `MODELCOMMIT*`) não
+bloqueia nada: retornar `.F.` ali é ignorado e a gravação já aconteceu.
 
 Consulte a referência completa via MCP:
 ```

@@ -55,6 +55,19 @@ Verifique (e exija do `writer`/`migrate`) os dois passos de [`references/validac
 
 ---
 
+## Falsos positivos conhecidos (aprendizados da KB — NÃO reportar)
+
+- **`.tlpp` com `Local x as <tipo>`**: o runtime JÁ inicializa (numeric→0,
+  character→"", logical→.F., date→31/12/1899). "Variável não inicializada" ali é
+  falso CRÍTICO — a exigência de inicialização explícita vale para `.prw` sem
+  tipagem.
+- Ao mesmo tempo, **cobre**: parâmetro/variável tipado comparado com `NIL`
+  (`var != NIL` em `as Date`/`as Character` gera `Incompatible types` na
+  compilação — o certo é `Empty(var)`). O `advpls appre` NÃO detecta erro de
+  tipo: **lint limpo não garante compilação**.
+
+---
+
 ## Consulta de Conhecimento
 
 Se precisar de informação não disponível no MCP, consulte o RAG:

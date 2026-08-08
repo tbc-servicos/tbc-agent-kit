@@ -15,6 +15,7 @@ Para código com padrões TOTVS (notação húngara, BeginSQL, ExecBlock, MVC), 
 | Quando você for... | Skill recomendada |
 |---|---|
 | Escrever/gerar código ADVPL ou TLPP | `/protheus:writer` |
+| Mapear o legado do cliente antes de mexer (customizações, PEs, regras) | `/protheus:arqueologia` |
 | Planejar uma feature ou novo desenvolvimento | `/protheus:brainstorm` |
 | Investigar erro, log de compilação, crash | `/protheus:diagnose` |
 | Revisar código existente | `/protheus:reviewer` |
@@ -36,7 +37,7 @@ Custo de código fora do padrão: alto (retrabalho, code review, manutenção).
 
 - **Notação húngara:** `c`=char · `n`=numérico · `l`=lógico · `d`=data · `a`=array · `b`=bloco · `o`=objeto
 - **Escopo explícito:** `Local` / `Static` / `Private` / `Public` — declarar no topo da função, antes de qualquer código
-- **Tratamento de erros:** programação defensiva com guard clauses e verificação de retorno; `ErrorBlock` para capturar erros de runtime em chamadas críticas; **nunca usar** `BEGIN SEQUENCE`
+- **Tratamento de erros (regra única):** programação defensiva com guard clauses e verificação de retorno; **`Try-Catch` é o padrão em TLPP** (`.tlpp`, classes); `ErrorBlock` **somente** em ADVPL clássico (`.prw`) onde Try-Catch não está disponível; **nunca usar** `BEGIN SEQUENCE`
 - **Extensões:** `.prw` programa · `.tlpp` TLPP moderno
 
 ## Regra de Modelos (OBRIGATÓRIA)
@@ -105,7 +106,11 @@ export CLAUDE_AUTOCOMPACT_PCT_OVERRIDE=50
 
 ## Ciclo de Desenvolvimento
 
+> **Entrega de fonte ADVPL/TLPP roda pelos gates deste plugin.** Workflows genéricos
+> de entrega não passam por lint/compilação e não gravam `gates.json` — não use.
+
 ```
+/protheus:arqueologia → mapa do legado da fatia (quando não houver)
 /protheus:brainstorm → MIT044/design aprovado
 /protheus:plan       → plano de implementação com tasks tipadas
 /protheus:implement  → Agent Team (implementer sonnet + reviewers sonnet, worktree)

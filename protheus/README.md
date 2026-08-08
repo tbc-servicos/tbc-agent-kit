@@ -205,6 +205,7 @@ Reinicie o Claude Desktop depois de salvar.
 
 ```
 /protheus:init-project  → explora projeto, entrevista, gera CLAUDE.md
+/protheus:arqueologia   → mapa do legado da fatia (quando não houver)
 /protheus:brainstorm    → MIT044 (opcional) + perguntas + design aprovado
 /protheus:plan          → decompõe design em tasks ADVPL-tipadas
 /protheus:implement     → Agent Team (worktree + feedback bidirecional):
@@ -226,13 +227,14 @@ Reinicie o Claude Desktop depois de salvar.
 | Review e QA | **sonnet** | Análise qualitativa, padrões, riscos |
 | Deploy / compilação | **haiku** | Compilar e gerar patch — mecânico |
 
-## Skills Disponíveis (17)
+## Skills Disponíveis (18)
 
 ### Ciclo Principal
 
 | Comando | Descrição |
 |---------|-----------|
 | `/protheus:init-project` | Explora projeto, entrevista e gera `CLAUDE.md` |
+| `/protheus:arqueologia` | Mapeia a fatia do legado do cliente antes do design |
 | `/protheus:brainstorm` | Planeja implementação — MIT044, perguntas, design aprovado |
 | `/protheus:plan` | Decompõe design em tasks ADVPL-tipadas |
 | `/protheus:implement` | Agent Team: impl → spec-review → code-review → lint |
@@ -297,23 +299,20 @@ Acesso a referência pública ADVPL/TLPP filtrada por organização (row-level v
 | `searchFunction` | Busca funções ADVPL/TLPP por nome, módulo, tipo |
 | `findEndpoint` | Encontra endpoints REST por path, método |
 | `findSmartView` | Busca SmartView por keyword ou equipe |
-| `listModules` | Lista módulos com contagem de funções |
+| `searchKnowledge` | Busca padrões, templates, convenções e aprendizados registrados |
+| `submitFeedback` | Registra um aprendizado de correção na base (via `/protheus:feedback`) |
+| `get_skill` | Recupera o conteúdo de uma skill da base |
 | `ragSearchKnowledge` | Busca vetorial (embedding 1536-dim) sobre uma base de conhecimento técnico ADVPL/TLPP |
 | `ragSearchDocs` | Busca vetorial sobre documentação técnica TOTVS (TDN), retorna `title`+`source_url`+`product_id` |
 
 > Campos `source`, `implementation`, `code` (IP proprietário TOTVS) são removidos das respostas para tier external. A base RAG é uma curadoria técnica sem PII.
 
-### Tier `internal` (TBC — 9 tools)
+### Tools adicionais de tier interno
 
-Inclui as 4 do external + 5 internas adicionais:
-
-| Tool | Descrição |
-|------|-----------|
-| `findExecAuto` | Localiza chamadas ExecAuto por rotina ou tabela |
-| `findMvcPattern` | Busca padrões MVC por model_id ou tabela |
-| `searchByTable` | Cross-search por alias de tabela |
-| `searchKnowledge` | Busca padrões, templates e convenções |
-| `searchDocuments` | Busca nos documentos PDF de treinamento |
+Algumas tools extras (`findExecAuto`, `findMvcPattern`, `searchByTable`,
+`searchDocuments`, `listModules`) existem apenas para credenciais de tier interno —
+as skills as marcam com "(se disponível no seu tier)". Sem elas, o caminho
+equivalente é `ragSearchKnowledge`/`ragSearchDocs`.
 
 ## Deploy via TDS-CLI
 
@@ -356,8 +355,9 @@ saveLocal=/patches/
 protheus/
 ├── .mcp.json                      # config do MCP (aponta para start.sh)
 ├── CLAUDE.md                      # convenções + regra de modelos + Agent Teams
-├── skills/                        # 18 skills especializadas
+├── skills/                        # 19 skills especializadas
 │   ├── init-project/              # setup do projeto
+│   ├── arqueologia/               # mapa do legado da fatia
 │   ├── brainstorm/                # design aprovado
 │   ├── plan/                      # plano de implementação
 │   ├── implement/                 # orquestração Agent Team

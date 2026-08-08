@@ -4,6 +4,65 @@ Histórico das versões públicas do `dataagile-agent-kit`.
 
 ---
 
+## [2.8.0] — 2026-08-08
+
+### O ciclo Protheus passou a lembrar do legado do cliente (protheus 2.16.0)
+
+Cada demanda começava do zero: ninguém sabia quais customizações já existiam na área que ia
+ser mexida, e o que a entrega anterior estabeleceu morria no patch. A nova skill
+**`/protheus:arqueologia`** mapeia **a fatia** que a demanda toca — customizações, Pontos de
+Entrada, dicionário customizado e regras de negócio embutidas — e grava em `docs/legado/`,
+append-only, com escala de confiança. Fatia já mapeada não é remapeada: é **conferida**, e
+divergência entre o mapa e o fonte de hoje vira achado.
+
+Do outro lado do ciclo, o `/protheus:verify` ganhou o **writeback** (Passo 2.5): terminada a
+liberação, o que a entrega criou volta para o mapa e para a lista de regressão. O
+`/protheus:plan` ganhou o **Passo 3.5**, que mede o alcance real da mudança (`grep` nos
+callers, confrontado com a lista fechada de fontes) e escreve o que **não pode quebrar** antes
+de salvar o plano — item verificável vira cenário E2E nomeado; item sem forma de verificar é
+observação, não regressão. O `/protheus:verify` bloqueia se algum item ficar sem veredito.
+
+### Confiança rotulada: CONFIRMADO, INFERIDO, LACUNA
+
+O `/protheus:specialist` passou a exigir **rótulo e fonte em toda afirmação técnica**, com teto
+por proveniência: conhecimento destilado de código pode chegar a CONFIRMADO; documentação
+sozinha tem teto INFERIDO. Dicionário de dados é INFERIDO até conferir no SX3 do cliente.
+
+A escala atravessa o ciclo: o `/protheus:diagnose` rotula a causa raiz **antes** de propor
+correção e não corrige sobre LACUNA; o `/protheus:brainstorm` recomenda com rótulo e fonte em
+cada pergunta.
+
+### Brainstorm por rodadas, e estado de pipeline em arquivo
+
+O `/protheus:brainstorm` trocou "uma pergunta por mensagem" por **rodadas de fronteira**: monta
+a árvore de decisão, pergunta de uma vez tudo que já dá para perguntar, e só termina quando não
+sobra premissa adotada em silêncio. Junto veio a regra **fato é meu, decisão é sua** — o que dá
+para descobrir no repositório, no MCP ou no ambiente não vira pergunta ao dev.
+
+O `gates.json` virou **um arquivo por feature**, criado no brainstorm e alimentado até o verify
+(`spec_review` → `code_review` → `lint` → `deploy` → `qa_e2e`). `plan` e `implement` derivam o
+estágio **do arquivo**, nunca da conversa: sessão nova retoma de onde parou, e com mais de uma
+feature aberta o skill pergunta qual, em vez de escolher a mais recente.
+
+### Hook que barra a corrupção de acento antes dela acontecer
+
+`Edit`/`Write` em fonte CP-1252 liam o arquivo como UTF-8 e regravavam com os acentos já
+destruídos — o hook pós-gravação avisava depois do estrago. O novo **`advpl-encoding-pre.sh`**
+(PreToolUse) bloqueia a ferramenta antes da leitura destrutiva e entrega o script Python que
+edita preservando o charset. Coberto por testes na suíte.
+
+### Aprendizados de campo nas skills
+
+`writer` e `reviewer`: `FWMsgRun` dentro de `VALID` trava a tela; variável tipada compara com
+`Empty()`, não com `NIL` — e `advpls appre` **não** pega erro de tipo, então lint limpo não
+garante compilação. O `reviewer` também parou de reportar dois falsos positivos conhecidos em
+`.tlpp`. `patterns`: `MsUnlock` sempre com alias explícito, alias já posicionado após
+`Posicione()`, e PE bloqueante × PE pós-gravação. `query-builder`: `ORDER BY` com `DESC` por
+coluna e alias de subquery sem `AS` (Oracle). `mvc-generator`: MVC em `.tlpp` exige namespace
+completo + `U_` nas referências. `feedback`: checagem de duplicata/contradição antes do rascunho
+e tag `promote:<skill>` no payload.
+
+
 ## [2.7.0] — 2026-08-07
 
 ### Brainstorm em opus, implementação em sonnet, haiku só no deploy (protheus 2.15.0 · fluig 2.2.0)

@@ -12,13 +12,13 @@ emitSessionContext({
   profile: 'external',
   cleanupTbcDbs: true,
   groups: [
-    { title: 'Ciclo de desenvolvimento (nesta ordem)', names: ['init-project', 'brainstorm', 'plan', 'implement', 'deploy', 'qa', 'verify'] },
+    { title: 'Ciclo de desenvolvimento (nesta ordem)', names: ['init-project', 'arqueologia', 'brainstorm', 'plan', 'implement', 'deploy', 'qa', 'verify'] },
     { title: 'Geracao e revisao de codigo', names: ['writer', 'reviewer', 'compile', 'mvc-generator', 'tlpp-rest-endpoint-generator', 'query-builder', 'migrate'] },
     { title: 'Consulta e diagnostico', names: ['specialist', 'patterns', 'sql', 'data-dictionary-lookup', 'diagnose'] },
     { title: 'Testes e relatorios', names: ['test-web', 'smartview-relatorio', 'feedback'] },
   ],
   notes: [
-    'MCP tools disponiveis: searchFunction, findEndpoint, findSmartView, listModules (catalogo) + ragSearchKnowledge, ragSearchDocs (busca semantica) — plugin protheus tbc-knowledge',
+    'MCP tools disponiveis: searchFunction, findEndpoint, findSmartView, searchKnowledge, submitFeedback (catalogo) + ragSearchKnowledge, ragSearchDocs (busca semantica) — plugin protheus tbc-knowledge',
     'Regra de modelos: opus para brainstorm/design, sonnet para implementacao e review/QA, haiku somente para deploy/compilacao.',
   ],
 });
